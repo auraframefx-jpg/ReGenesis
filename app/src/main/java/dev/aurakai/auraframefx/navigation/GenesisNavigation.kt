@@ -29,6 +29,7 @@ import dev.aurakai.auraframefx.aura.ui.XhancementScreen
 import dev.aurakai.auraframefx.billing.SubscriptionViewModel
 import dev.aurakai.auraframefx.oracledrive.genesis.cloud.OracleDriveScreen
 import dev.aurakai.auraframefx.ui.customization.GyroscopeCustomizationScreen
+import dev.aurakai.auraframefx.ui.gates.AgentHubScreen
 import dev.aurakai.auraframefx.ui.gates.AgentMonitoringScreen
 import dev.aurakai.auraframefx.ui.gates.CodeAssistScreen
 import dev.aurakai.auraframefx.ui.gates.DirectChatScreen
@@ -205,6 +206,9 @@ fun GenesisNavigationHost(
             composable(GenesisRoutes.AI_CHAT) { AIChatScreen() }
 
             // Gate routes with REAL screens
+            composable(GenesisRoutes.AGENT_HUB) {
+                AgentHubScreen(navController = navController)
+            }
             composable(GenesisRoutes.AURAS_LAB) {
                 AuraLabScreen(onNavigateBack = { navController.popBackStack() })
             }
