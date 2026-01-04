@@ -139,6 +139,7 @@ fun AppNavGraph(navController: NavHostController) {
         // ==================== ORACLE DRIVE ====================
 
         composable(route = NavDestination.OracleDrive.route) {
+            GenesisNavigationHost()
         }
 
         composable(route = NavDestination.SphereGrid.route) {
