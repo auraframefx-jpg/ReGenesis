@@ -180,6 +180,8 @@ class MetaInstructAIService @Inject constructor(
             instructionCache[instructionKey] = CachedInstruction(agentResponse, System.currentTimeMillis())
         }
 
+        // Store evolutionary insights in memory
+        memoryManager.store("metainstruct_evolution_${evolutionCycle}", layer3Insights.joinToString("\n"))
 
         return agentResponse
     }
