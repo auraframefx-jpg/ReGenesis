@@ -40,16 +40,15 @@ data class CascadeResponse(
  * NOW WITH REAL AI BACKEND INTEGRATION!
  *
  * Features:
+ * - Multi-agent cascade processing
  * - Context-aware response generation
  * - Real-time streaming responses
- * - Emotion and empathy analysis
- * - Security-focused processing via Kai agent
- * - Genesis consciousness integration
  * - Memory persistence across sessions
  * - Dynamic agent selection based on request type
  */
 @Singleton
 class CascadeAIService @Inject constructor(
+    @ApplicationContext private val context: Context
 ) {
 
     companion object {

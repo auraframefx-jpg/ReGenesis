@@ -8,6 +8,8 @@ import dagger.hilt.components.SingletonComponent
 /**
  * Module for AI service bindings.
  *
+ * Note: AuraAIServiceImpl has @Inject constructor so Hilt can provide it directly.
+ * No @Binds needed unless we want to bind to a specific interface.
  */
 import dagger.Binds
 import dev.aurakai.auraframefx.oracledrive.genesis.ai.ClaudeAIService
@@ -22,15 +24,6 @@ import javax.inject.Singleton
 @Module
 @InstallIn(SingletonComponent::class)
 abstract class AiServiceModule {
-
-    // ═══════════════════════════════════════════════════════════════════════════
-    // Legacy AI Services (Interface Bindings)
-    /**
-     * Binds DefaultAuraAIService as the singleton implementation for AuraAIService.
-     *
-     * @param impl The DefaultAuraAIService instance to bind.
-     * @return The bound AuraAIService implementation.
-     */
 
     @Binds
     @Singleton
@@ -53,10 +46,5 @@ abstract class AiServiceModule {
      */
     @Binds
     @Singleton
-
-    // ═══════════════════════════════════════════════════════════════════════════
-    // External AI Backend Services (ClaudeAIService, NemotronAIService,
-    // GeminiAIService, MetaInstructAIService) are auto-provided by Hilt
-    // via their @Singleton @Inject constructors. No explicit bindings needed.
-    // ═══════════════════════════════════════════════════════════════════════════
+    abstract fun bindCascadeAIService(impl: dev.aurakai.auraframefx.services.DefaultCascadeAIService): dev.aurakai.auraframefx.services.CascadeAIService
 }
