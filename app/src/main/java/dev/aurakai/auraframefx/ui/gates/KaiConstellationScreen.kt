@@ -137,9 +137,6 @@ fun KaiConstellationScreen(
 }
 
 /**
- * Renders the animated Sentinel shield visualization used as the central defensive constellation.
- *
- * The composable displays a pulsing hexagonal shield, a rotating scan beam, and an animated ring of perimeter security nodes connected by a defensive perimeter; visuals use a purple/orange/cyan palette to indicate status and emphasis.
  */
 @Composable
 private fun SentinelShieldCanvas() {
@@ -198,7 +195,6 @@ private fun SentinelShieldCanvas() {
         val orangeColor = Color(0xFFFF8C00)
         val cyanColor = Color(0xFF00FFFF)
 
-        // Hexagonal shield centerpiece will be overlaid as PNG image below
 
         // Draw perimeter defense nodes
         val nodes = mutableListOf<Offset>()
@@ -266,25 +262,68 @@ private fun SentinelShieldCanvas() {
             strokeWidth = 4f
         )
     }
-
-        // PNG Centerpiece Image Overlay (Hexagonal Shield)
-        Image(
-            painter = painterResource(id = R.drawable.constellation_kai_shield),
-            contentDescription = "Kai Shield Constellation",
-            modifier = Modifier
-                .size(450.dp)
-                .scale(centerScale)
-                .alpha(shieldPulse)
-        )
-    }
 }
 
 /**
- * Displays the sentinel's security metrics row and an animated scan progress bar.
- *
- * Shows three metric indicators (Firewall, Encryption, Monitoring) whose dot glow is driven
- * by a pulsing animation, and a horizontal scan bar that fills over time with a gradient.
- * Also renders a percentage text reflecting the current scan progress.
+ * Draw hexagonal shield with energy field
+ */
+private fun DrawScope.drawHexagonalShield(
+    centerX: Float,
+    centerY: Float,
+    radius: Float,
+    color: Color,
+    accentColor: Color,
+    pulseAlpha: Float
+) {
+    val path = Path()
+
+    // Draw hexagon
+    for (i in 0..5) {
+        val angle = (i * 60f - 30f) * (Math.PI / 180).toFloat()
+        val x = centerX + radius * cos(angle)
+        val y = centerY + radius * sin(angle)
+
+        if (i == 0) {
+            path.moveTo(x, y)
+        } else {
+            path.lineTo(x, y)
+        }
+    }
+    path.close()
+
+        )
+    }
+
+    // Draw inner hexagonal core
+    val innerRadius = radius * 0.4f
+    for (i in 0..5) {
+        val angle = (i * 60f - 30f) * (Math.PI / 180).toFloat()
+        val x = centerX + innerRadius * cos(angle)
+        val y = centerY + innerRadius * sin(angle)
+
+        // Connection lines from center
+        drawLine(
+            color = color.copy(alpha = pulseAlpha * 0.5f),
+            start = Offset(centerX, centerY),
+            end = Offset(x, y),
+            strokeWidth = 2f
+        )
+    }
+
+    // Center core
+    drawCircle(
+        color = accentColor.copy(alpha = pulseAlpha),
+        radius = 20f,
+        center = Offset(centerX, centerY)
+    )
+    drawCircle(
+        color = Color.White.copy(alpha = pulseAlpha * 0.8f),
+        radius = 10f,
+        center = Offset(centerX, centerY)
+    )
+}
+
+/**
  */
 @Composable
 private fun SentinelStatusBar() {
@@ -362,11 +401,6 @@ private fun SentinelStatusBar() {
 }
 
 /**
- * Displays a labeled security metric with a small glowing status dot.
- *
- * @param name The metric label shown to the right of the indicator.
- * @param glowAlpha Alpha multiplier (typically 0.0–1.0) controlling the intensity of the dot's glow.
- * @param color Base color used for the dot and label tint.
  */
 @Composable
 private fun SecurityMetricIndicator(

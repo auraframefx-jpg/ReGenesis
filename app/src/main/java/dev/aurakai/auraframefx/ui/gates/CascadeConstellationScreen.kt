@@ -193,7 +193,6 @@ private fun DataStreamCanvas() {
         val cyanColor = Color(0xFF00FFFF)
         val blueColor = Color(0xFF1E90FF)
 
-        // Mechanical wing centerpiece will be overlaid as PNG image below
 
         // Draw data flow network nodes
         val nodeCount = 12
@@ -268,23 +267,47 @@ private fun DataStreamCanvas() {
             )
         }
     }
-
-        // PNG Centerpiece Image Overlay (Looping Arrows)
-        Image(
-            painter = painterResource(id = R.drawable.constellation_cascade_arrows),
-            contentDescription = "Cascade Arrows Constellation",
-            modifier = Modifier
-                .size(350.dp)
-                .scale(centerScale)
-                .alpha(pulseAlpha)
-        )
-    }
 }
 
 /**
- * Renders an animated status bar with channel indicators, a horizontal flow progress bar, and a percentage label.
- *
- * The bar visually reflects stream activity: a repeating fill animation drives the progress percentage while a pulsing glow affects the channel indicators and gradient fill.
+ * Draw mechanical wing/data stream centerpiece
+ */
+private fun DrawScope.drawMechanicalWing(
+    centerX: Float,
+    centerY: Float,
+    color: Color,
+    accentColor: Color,
+    rotation: Float,
+    pulseAlpha: Float
+) {
+    val wingLength = 120f
+    val wingWidth = 40f
+
+        )
+    }
+
+    // Central hub
+    drawCircle(
+        color = color.copy(alpha = pulseAlpha),
+        radius = 20f,
+        center = Offset(centerX, centerY)
+    )
+
+    // Energy core
+    drawCircle(
+        color = accentColor.copy(alpha = pulseAlpha * 0.8f),
+        radius = 12f,
+        center = Offset(centerX, centerY)
+    )
+
+    drawCircle(
+        color = Color.White.copy(alpha = pulseAlpha),
+        radius = 6f,
+        center = Offset(centerX, centerY)
+    )
+}
+
+/**
  */
 @Composable
 private fun DataStreamStatusBar() {
@@ -362,14 +385,6 @@ private fun DataStreamStatusBar() {
 }
 
 /**
- * Renders a labeled channel indicator with a glowing circular dot.
- *
- * Displays a small circular indicator whose outer glow and inner core are tinted by `color`
- * and modulated by `glowAlpha`, followed by the channel `name` styled with a matching tint.
- *
- * @param name The label text for the channel (e.g., "Input", "Process", "Output").
- * @param glowAlpha Float in the range 0..1 that controls the opacity of the outer glow and inner core.
- * @param color The base tint used for the dot and the label text.
  */
 @Composable
 private fun StreamChannelIndicator(
