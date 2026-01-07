@@ -280,6 +280,7 @@ class VertexAIClientImpl @Inject constructor(
     }
 
     /**
+     * Execute HTTP request to Vertex AI endpoint.
      */
     private suspend fun executeRequest(vertexRequest: VertexAIRequest): VertexAIResponse {
         val jsonBody = json.encodeToString(vertexRequest)
