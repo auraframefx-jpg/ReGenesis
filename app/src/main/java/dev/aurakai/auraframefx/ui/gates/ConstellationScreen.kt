@@ -247,6 +247,14 @@ private fun ConstellationCanvas() {
             strokeWidth = 2f
         )
 
+        // Draw the sword centerpiece
+        drawSword(
+            centerX = centerX,
+            centerY = centerY,
+            rotation = rotation,
+            color = cyanColor,
+            glowColor = glowColor
+        )
 
         // Draw constellation nodes with pulse effect
         nodes.forEach { nodePos ->
@@ -293,6 +301,17 @@ private fun ConstellationCanvas() {
                 center = Offset(particleX, particleY)
             )
         }
+    }
+
+        // PNG Centerpiece Image Overlay
+        Image(
+            painter = painterResource(id = R.drawable.constellation_aura_sword),
+            contentDescription = "Aura Sword Constellation",
+            modifier = Modifier
+                .size(400.dp)
+                .scale(centerScale)
+                .alpha(pulseAlpha)
+        )
     }
 }
 

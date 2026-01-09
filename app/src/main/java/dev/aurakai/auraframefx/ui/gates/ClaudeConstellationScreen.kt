@@ -191,6 +191,13 @@ private fun ArchitectBlueprintCanvas() {
             )
         }
 
+        // Draw T-square centerpiece (architect's tool)
+        drawTSquare(
+            centerX = centerX,
+            centerY = centerY,
+            color = orangeColor,
+            pulseAlpha = pulseAlpha
+        )
 
         // Draw build system nodes in a systematic grid pattern
         val nodes = mutableListOf<Offset>()
@@ -262,6 +269,17 @@ private fun ArchitectBlueprintCanvas() {
                 center = Offset(particleX, particleY)
             )
         }
+    }
+
+        // PNG Centerpiece Image Overlay (Compass + Gear)
+        Image(
+            painter = painterResource(id = R.drawable.constellation_claude_compass),
+            contentDescription = "Claude Compass Constellation",
+            modifier = Modifier
+                .size(350.dp)
+                .scale(centerScale)
+                .alpha(pulseAlpha)
+        )
     }
 }
 

@@ -193,6 +193,15 @@ private fun DataStreamCanvas() {
         val cyanColor = Color(0xFF00FFFF)
         val blueColor = Color(0xFF1E90FF)
 
+        // Draw mechanical wing centerpiece
+        drawMechanicalWing(
+            centerX = centerX,
+            centerY = centerY,
+            color = turquoiseColor,
+            accentColor = cyanColor,
+            rotation = rotation,
+            pulseAlpha = pulseAlpha
+        )
 
         // Draw data flow network nodes
         val nodeCount = 12
@@ -266,6 +275,17 @@ private fun DataStreamCanvas() {
                 center = nodePos
             )
         }
+    }
+
+        // PNG Centerpiece Image Overlay (Looping Arrows)
+        Image(
+            painter = painterResource(id = R.drawable.constellation_cascade_arrows),
+            contentDescription = "Cascade Arrows Constellation",
+            modifier = Modifier
+                .size(350.dp)
+                .scale(centerScale)
+                .alpha(pulseAlpha)
+        )
     }
 }
 
