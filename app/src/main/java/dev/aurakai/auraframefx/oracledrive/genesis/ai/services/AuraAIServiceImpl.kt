@@ -56,6 +56,7 @@ abstract class AuraAIServiceImpl(
      * @return The string "Generated text placeholder".
      */
     override suspend fun generateText(prompt: String, context: String): String {
+        return "Generated text placeholder"
     }
 
     /**
@@ -64,6 +65,7 @@ abstract class AuraAIServiceImpl(
      * @return The string "AI response placeholder".
      */
     fun getAIResponse(prompt: String, options: Map<String, Any>?): String {
+        return "AI response placeholder"
     }
 
     /**
