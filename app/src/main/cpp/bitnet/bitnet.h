@@ -3,7 +3,20 @@
 
 #include <string>
 
-// Scaffolding for BitNet Model interaction
+/**
+ * Scaffolding for interacting with a BitNet model.
+ */
+ 
+/**
+ * Initialize a BitNetModel with the filesystem path to a model.
+ * @param model_path Filesystem path to the BitNet model artifact.
+ */
+ 
+/**
+ * Generate text from the BitNet model given an input prompt.
+ * @param prompt Text prompt to condition the model's output.
+ * @returns Generated text produced for the given prompt.
+ */
 class BitNetModel {
 public:
     BitNetModel(const std::string& model_path) {}

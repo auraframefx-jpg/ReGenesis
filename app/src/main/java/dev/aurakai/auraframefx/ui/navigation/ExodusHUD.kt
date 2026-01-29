@@ -24,6 +24,16 @@ import kotlin.math.absoluteValue
  * The Split-Screen Anti-Gravity HUD (15/85 Ratio).
  * Replaces the Sovereign Procession Screen.
  */
+/**
+ * Composes the Exodus HUD screen: a horizontally swipeable row of monolith cards with
+ * 3D-like scale and alpha effects, and a bottom Prometheus globe that pulses in response to global touch.
+ *
+ * The top region occupies ~85% of the height and displays a pager of monoliths whose scale,
+ * alpha, and vertical offset vary with distance from the center to produce a parallax/orbit feel.
+ * Double-tapping a monolith navigates to its detail route; press-and-hold anywhere triggers the globe pulse.
+ *
+ * @param navController NavController used to navigate to a monolith's detail screen on card double-tap
+ */
 @Composable
 fun ExodusHUD(navController: NavController) {
     val pagerState = rememberPagerState(pageCount = { SovereignRouter.getCount() })
@@ -126,8 +136,13 @@ fun ExodusHUD(navController: NavController) {
 }
 
 /**
- * Wrapper for SovereignMonolith to match the "MonolithCard" specification
- * and handle touch events for navigation and pulse feedback.
+ * Renders a monolith visual that handles double-tap navigation and press/release touch callbacks.
+ *
+ * @param assetPath Path or identifier for the image displayed by the monolith.
+ * @param onDoubleTap Called when the card is double-tapped (typically used to navigate to details).
+ * @param onPress Called when a press gesture begins on the card.
+ * @param onRelease Called when the press gesture ends or is released.
+ * @param modifier Modifier applied to the monolith; gesture handling for taps and presses is added to this modifier. 
  */
 @Composable
 fun MonolithCard(

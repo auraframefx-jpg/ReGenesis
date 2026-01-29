@@ -19,13 +19,21 @@ class BitNetLocalService : Service() {
 
     private val serviceScope = CoroutineScope(SupervisorJob() + Dispatchers.Default)
 
+    /**
+     * Declares that this service does not support binding.
+     *
+     * @param intent The Intent supplied to bind to the service, if any.
+     * @return `null` to indicate binding is not supported.
+     */
     override fun onBind(intent: Intent?): IBinder? {
         return null
     }
 
     /**
-     * Public API to generate a response from the local BitNet model.
-     * This function is suspendable to ensure it doesn't block the calling thread.
+     * Generate a response from the local BitNet model for the given prompt.
+     *
+     * @param prompt The input text sent to the local model to generate a response.
+     * @return The model's response as a string, or the literal "Error: Local Core Unreachable" if inference fails.
      */
     suspend fun generateResponse(prompt: String): String = withContext(Dispatchers.Default) {
         try {
@@ -41,9 +49,11 @@ class BitNetLocalService : Service() {
     }
 
     /**
-     * Native Method Declaration
-     * Links to the C++ implementation in bitnet_bridge.cpp
-     */
+ * Invoke the native BitNet inference implementation to generate a response for the given prompt.
+ *
+ * @param prompt The input text prompt to be processed by the native inference engine.
+ * @return The generated response string produced by the native engine.
+ */
     private external fun generateLocalResponse(prompt: String): String
 
     companion object {

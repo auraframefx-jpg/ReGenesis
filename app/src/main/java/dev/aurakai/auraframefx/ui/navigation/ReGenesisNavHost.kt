@@ -39,6 +39,19 @@ import dev.aurakai.auraframefx.ui.screens.ModeSelectionScreen
 
 // Mapping for clarity - strictly Sovereign architecture
 
+/**
+ * Defines and wires the Jetpack Compose navigation graph for the Sovereign UI, including the start
+ * destination, workspace routes, and mode selection flow.
+ *
+ * The composable collects customization state from the provided view model and triggers its
+ * initialization on composition. It declares "exodus_home" as the start destination and hosts
+ * routes for mode selection, the Exodus home HUD, pixel workspaces, named workspaces, Aura Lab,
+ * and the interface builder.
+ *
+ * @param navController Controller used to perform navigation actions within the hosted graph.
+ * @param customizationViewModel ViewModel that supplies customization state and actions; defaults
+ *   to a composition-scoped viewModel().
+ */
 @Composable
 fun ReGenesisNavHost(
     navController: NavHostController,

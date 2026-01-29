@@ -9,7 +9,20 @@
 // Static instance for the session
 static BitNetModel* model = nullptr;
 
-extern "C" JNIEXPORT jstring JNICALL
+extern "C" /**
+ * Generate a model response for the given prompt using a shared BitNetModel instance.
+ *
+ * Lazily initializes a process-global BitNetModel on first use (model path set to
+ * "/sdcard/models/bitnet-100b.gguf") and attempts to pin the calling thread to CPU
+ * cores 4–7 to optimize performance. Converts the provided Java string prompt to UTF-8,
+ * invokes the model to produce a response, and returns that response as a newly created
+ * Java UTF string.
+ *
+ * @param j_prompt Java UTF-8 string containing the input prompt.
+ * @return jstring A new Java UTF string containing the generated response, or `nullptr`
+ *         if the input string conversion fails or an error occurs.
+ */
+JNIEXPORT jstring JNICALL
 Java_dev_aurakai_auraframefx_services_BitNetLocalService_generateLocalResponse(
     JNIEnv* env,
     jobject /* this */,

@@ -16,6 +16,11 @@ object SovereignRouter {
     // Default path, but mutable for testing/configuration
     var basePath: String = "file:///sdcard/Pictures/Screenshots/"
 
+    /**
+     * Provides the predefined list of navigable SovereignRoute entries in display order.
+     *
+     * @return The list of predefined SovereignRoute instances in display order.
+     */
     private fun getRoutes(): List<SovereignRoute> = listOf(
         SovereignRoute(
             id = "01",
@@ -96,14 +101,31 @@ object SovereignRouter {
         )
     )
 
+    /**
+     * Selects the route corresponding to the given page index.
+     *
+     * @param page Index of the desired route within the routes list.
+     * @return The SovereignRoute at the specified index, or the first route if the index is out of range.
+     */
     fun fromPage(page: Int): SovereignRoute {
         val routes = getRoutes()
         return routes.getOrElse(page) { routes.first() }
     }
 
+    /**
+     * Finds the SovereignRoute with the given id.
+     *
+     * @param id The identifier of the route to find.
+     * @return The matching `SovereignRoute`, or `null` if no route has the given id.
+     */
     fun getById(id: String): SovereignRoute? {
         return getRoutes().find { it.id == id }
     }
 
-    fun getCount(): Int = getRoutes().size
+    /**
+ * Gets the total number of SovereignRoute entries currently available.
+ *
+ * @return The number of available SovereignRoute entries.
+ */
+fun getCount(): Int = getRoutes().size
 }
