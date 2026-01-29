@@ -8,105 +8,102 @@ data class SovereignRoute(
     val title: String,
     val highFiPath: String,
     val pixelArtPath: String,
+    val description: String = "",
     val color: Color = SovereignTeal
 )
 
 object SovereignRouter {
-    private const val BASE_PATH = "file:///sdcard/Pictures/Screenshots/"
+    // Updated to use assets instead of sdcard for reliability
+    var basePath: String = "file:///android_asset/gate_images/"
 
-    private val routes = listOf(
+    private fun getRoutes(): List<SovereignRoute> = listOf(
         SovereignRoute(
             id = "01",
             title = "GENESIS CORE",
-            highFiPath = "${BASE_PATH}brain.png",
-            pixelArtPath = "${BASE_PATH}IMG_20260128_142126.png"
+            description = "Nemotron-3-Nano Reasoning / Ethical Governor",
+            highFiPath = "${basePath}brain.png",
+            pixelArtPath = "${basePath}IMG_20260128_142126.png"
         ),
         SovereignRoute(
             id = "02",
             title = "TRINITY SYSTEM",
-            highFiPath = "${BASE_PATH}IMG_20260128_141115.png",
-            pixelArtPath = "${BASE_PATH}IMG_20260128_142126.png"
+            description = "Agent Fusion State / Shared Memory",
+            highFiPath = "${basePath}IMG_20260128_141115.png",
+            pixelArtPath = "${basePath}IMG_20260128_142126.png"
         ),
         SovereignRoute(
             id = "03",
             title = "AURA'S LAB",
-            highFiPath = "${BASE_PATH}IMG_20260128_140725.png",
-            pixelArtPath = "${BASE_PATH}IMG_20260128_142213.png"
+            description = "Chroma Core HCT / Blade Sharpness Physics",
+            highFiPath = "${basePath}IMG_20260128_140725.png",
+            pixelArtPath = "${basePath}IMG_20260128_142213.png"
         ),
         SovereignRoute(
             id = "04",
             title = "AGENT NEXUS",
-            highFiPath = "${BASE_PATH}IMG_20260128_141704.png",
-            pixelArtPath = "${BASE_PATH}IMG_20260128_142302.png"
+            description = "Human-AI Handshake / Google ADK",
+            highFiPath = "${basePath}IMG_20260128_141704.png",
+            pixelArtPath = "${basePath}IMG_20260128_142302.png"
         ),
         SovereignRoute(
             id = "05",
             title = "SENTINEL FORTRESS",
-            highFiPath = "${BASE_PATH}IMG_20260128_140949.png",
-            pixelArtPath = "${BASE_PATH}IMG_20260128_142022.png"
+            description = "Thermal Metabolism / Kernel Shield",
+            highFiPath = "${basePath}IMG_20260128_140949.png",
+            pixelArtPath = "${basePath}IMG_20260128_142022.png"
         ),
         SovereignRoute(
             id = "06",
             title = "FIGMA BRIDGE",
-            highFiPath = "${BASE_PATH}IMG_20260128_141018.png",
-            pixelArtPath = "${BASE_PATH}IMG_20260128_142213.png"
+            description = "SVG-to-Compose / Layer Design Sync",
+            highFiPath = "${basePath}IMG_20260128_141018.png",
+            pixelArtPath = "${basePath}IMG_20260128_142213.png"
         ),
         SovereignRoute(
             id = "07",
             title = "SECURE NODE",
-            highFiPath = "${BASE_PATH}IMG_20260128_141219.png",
-            pixelArtPath = "${BASE_PATH}IMG_20260128_142022.png"
+            description = "YukiHookAPI / Zero-Knowledge Encryption",
+            highFiPath = "${basePath}IMG_20260128_141219.png",
+            pixelArtPath = "${basePath}IMG_20260128_142022.png"
         ),
         SovereignRoute(
             id = "08",
             title = "NEXUS SYSTEM",
-            highFiPath = "${BASE_PATH}IMG_20260128_140816.png",
-            pixelArtPath = "${BASE_PATH}IMG_20260128_142126.png"
+            description = "Agent Swarm Event Bus / Priority Queue",
+            highFiPath = "${basePath}IMG_20260128_140816.png",
+            pixelArtPath = "${basePath}IMG_20260128_142126.png"
         ),
         SovereignRoute(
             id = "09",
             title = "MEMORY CORE",
-            highFiPath = "${BASE_PATH}IMG_20260128_140905.png",
-            pixelArtPath = "${BASE_PATH}IMG_20260128_142126.png"
+            description = "6-Layer Spiritual Chain / Identity Persistence",
+            highFiPath = "${basePath}IMG_20260128_140905.png",
+            pixelArtPath = "${basePath}IMG_20260128_142126.png"
         ),
         SovereignRoute(
             id = "10",
             title = "ORACLE DRIVE",
-            highFiPath = "${BASE_PATH}IMG_20260128_141519.png",
-            pixelArtPath = "${BASE_PATH}IMG_20260128_141949.png"
+            description = "Native C++ Bridge / Partition R-W Access",
+            highFiPath = "${basePath}IMG_20260128_141519.png",
+            pixelArtPath = "${basePath}IMG_20260128_141949.png"
         ),
         SovereignRoute(
             id = "11",
             title = "DATA VEIN",
-            highFiPath = "${BASE_PATH}IMG_20260128_141756.png",
-            pixelArtPath = "${BASE_PATH}IMG_20260128_142126.png"
+            description = "12-Channel Telemetry / Prometheus Glow",
+            highFiPath = "${basePath}IMG_20260128_141756.png",
+            pixelArtPath = "${basePath}IMG_20260128_142126.png"
         )
     )
 
-    /**
-     * Retrieves the route corresponding to the given page index.
-     *
-     * @param page Zero-based index of the desired route.
-     * @return The route at the given index, or the first route if the index is out of bounds.
-     */
     fun fromPage(page: Int): SovereignRoute {
+        val routes = getRoutes()
         return routes.getOrElse(page) { routes.first() }
     }
 
-    /**
-     * Finds the SovereignRoute with the given id.
-     *
-     * @param id The route identifier to match.
-     * @return The SovereignRoute with the matching id, or `null` if none is found.
-     */
     fun getById(id: String): SovereignRoute? {
-        return routes.find { it.id == id }
+        return getRoutes().find { it.id == id }
     }
 
-    /**
- * Gets the number of available sovereign routes.
- *
- * @return The total number of routes.
- */
-fun getCount(): Int = routes.size
+    fun getCount(): Int = getRoutes().size
 }

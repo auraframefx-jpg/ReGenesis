@@ -34,11 +34,6 @@ Java_dev_aurakai_auraframefx_services_BitNetLocalService_generateLocalResponse(
         }
     }
 
-    if (j_prompt == nullptr) {
-        __android_log_print(ANDROID_LOG_WARN, TAG, "Null prompt received");
-        return nullptr;
-    }
-
     const char* prompt_cstr = env->GetStringUTFChars(j_prompt, nullptr);
     if (!prompt_cstr) {
         return nullptr;
