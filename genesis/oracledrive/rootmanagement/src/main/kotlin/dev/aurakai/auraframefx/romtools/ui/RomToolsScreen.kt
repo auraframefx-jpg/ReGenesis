@@ -81,13 +81,8 @@ import timber.log.Timber
  * flashing and restoring backups and controls backdrop animation states (static, exploding, active,
  * completing, victory).
  *
- * @param modifier Modifier applied to the root container.
- * @param romToolsViewModel ViewModel that supplies state and performs ROM operations. By default this
- *   is obtained via Hilt using the current [LocalViewModelStoreOwner]; a [ViewModelStoreOwner] must
- *   be present in the composition when using the default parameter (otherwise a descriptive
- *   runtime error is thrown).
- */
-@Composable
+`@OptIn`(ExperimentalMaterial3Api::class)
+`@Composable`
 fun RomToolsScreen(modifier: Modifier = Modifier, romToolsViewModel: RomToolsViewModel = hiltViewModel(checkNotNull<ViewModelStoreOwner>(LocalViewModelStoreOwner.current) {
         "No ViewModelStoreOwner was provided via LocalViewModelStoreOwner"
     }, null),) {
