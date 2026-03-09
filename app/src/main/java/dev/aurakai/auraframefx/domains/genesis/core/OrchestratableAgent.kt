@@ -1,5 +1,6 @@
 package dev.aurakai.auraframefx.domains.genesis.core
 
+import dev.aurakai.auraframefx.domains.genesis.models.AgentCapabilityCategory
 import dev.aurakai.auraframefx.domains.genesis.models.AgentResponse
 import dev.aurakai.auraframefx.domains.genesis.models.AgentType
 import dev.aurakai.auraframefx.domains.genesis.models.AiRequest
@@ -49,8 +50,12 @@ interface OrchestratableAgent {
      * Called during platform termination.
      */
     suspend fun shutdown()
-    suspend fun processRequest(request: AiRequest, context: String, agentType: AgentType): AgentResponse
-    
+    suspend fun processRequest(
+        request: AiRequest,
+        context: String,
+        agentType: AgentType
+    ): AgentResponse
+
     /**
      * Handle an incoming message from the inter-agent communication bus.
      */

@@ -116,7 +116,12 @@ class OracleCloudApi @Inject constructor() {
         return Response.success(ObjectList(emptyList()))
     }
 
-    suspend fun uploadFile(bucketName: String, objectName: String, body: RequestBody): Response<Unit> {
+    suspend fun uploadFile(
+        bucketName: String,
+        objectName: String,
+         body: RequestBody
+
+    ): Response<Unit> {
         // Stub implementation - returns success
         return Response.success(Unit)
     }

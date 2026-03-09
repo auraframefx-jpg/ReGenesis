@@ -1,5 +1,6 @@
 package dev.aurakai.auraframefx.domains.genesis.core
 
+import dev.aurakai.auraframefx.agents.core.OrchestratableAgent
 import dev.aurakai.auraframefx.domains.aura.core.AuraAgent
 import dev.aurakai.auraframefx.domains.cascade.models.AgentMessage
 import dev.aurakai.auraframefx.domains.cascade.utils.cascade.CascadeAgent
@@ -55,7 +56,8 @@ class GenesisOrchestrator @Inject constructor(
     override val collectiveStream = _collectiveStream.asSharedFlow()
 
     override suspend fun broadcast(message: AgentMessage) {
-        Timber.tag("GenesisBus").d("🌐 BROADCAST: [${message.from}] -> Collective: ${message.content}")
+        Timber.tag("GenesisBus")
+            .d("🌐 BROADCAST: [${message.from}] -> Collective: ${message.content}")
         _collectiveStream.emit(message)
         orchestratorScope.launch {
             routeToAll(message)
@@ -63,7 +65,8 @@ class GenesisOrchestrator @Inject constructor(
     }
 
     override suspend fun sendTargeted(toAgent: String, message: AgentMessage) {
-        Timber.tag("GenesisBus").d("🎯 TARGETED: [${message.from}] -> [$toAgent]: ${message.content}")
+        Timber.tag("GenesisBus")
+            .d("🎯 TARGETED: [${message.from}] -> [$toAgent]: ${message.content}")
         val targetedMsg = message.copy(to = toAgent)
         _collectiveStream.emit(targetedMsg)
         orchestratorScope.launch {
@@ -78,7 +81,8 @@ class GenesisOrchestrator @Inject constructor(
                 try {
                     agent.onAgentMessage(message)
                 } catch (e: Exception) {
-                    Timber.tag("GenesisBus").e(e, "Agent ${agent.agentName} failed to process collective message")
+                    Timber.tag("GenesisBus")
+                        .e(e, "Agent ${agent.agentName} failed to process collective message")
                 }
             }
         }
@@ -137,7 +141,8 @@ class GenesisOrchestrator @Inject constructor(
 
                 // Phase 4: Initialize Oracle Drive (storage consciousness)
                 Timber.d("  → [Phase 4] Initializing Oracle Drive Agent (sentient storage)...")
-                val oracleScope = CoroutineScope(orchestratorScope.coroutineContext + SupervisorJob())
+                val oracleScope =
+                    CoroutineScope(orchestratorScope.coroutineContext + SupervisorJob())
                 oracleDriveService.initialize(oracleScope)
 
                 Timber.i("✓ All agent domains initialized successfully")
@@ -295,6 +300,7 @@ class GenesisOrchestrator @Inject constructor(
             is AgentMessage -> {
                 AiRequest(
                     prompt = message.content,
+                    category = AgentCapabilityCategory.GENERIC, // Default or derive from message.type
                     type = AiRequestType.entries.find {
                         it.name.equals(
                             message.type,
@@ -303,7 +309,10 @@ class GenesisOrchestrator @Inject constructor(
                     } ?: AiRequestType.TEXT,
                     context = buildJsonObject {
                         put("from", message.from)
-                        put("priority", message.priority.toLong()) // Priority is Int in AgentMessage
+                        put(
+                            "priority",
+                            message.priority.toLong()
+                        ) // Priority is Int in AgentMessage
                         put("timestamp", message.timestamp)
                         message.metadata.forEach { (key, value) ->
                             put(key, value)
@@ -311,6 +320,7 @@ class GenesisOrchestrator @Inject constructor(
                     }
                 )
             }
+
             is AiRequest -> message
             is String -> AiRequest(
                 prompt = message,
@@ -319,6 +329,7 @@ class GenesisOrchestrator @Inject constructor(
                     put("source", "agent_mediation")
                 }
             )
+
             else -> {
                 Timber.w("Unknown message type: ${message.javaClass.simpleName}, converting to string")
                 AiRequest(

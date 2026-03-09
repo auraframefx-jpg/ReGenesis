@@ -1,67 +1,80 @@
-// File: romtools/src/main/kotlin/dev/aurakai/auraframefx/romtools/RomToolsManager.kt
 package dev.aurakai.auraframefx.romtools
 
 import android.content.Context
 import android.net.Uri
 import android.os.Build
 import dev.aurakai.auraframefx.core.consciousness.NexusMemoryCore
+import dev.aurakai.auraframefx.domains.genesis.models.AgentCapabilityCategory
 import dev.aurakai.auraframefx.domains.genesis.models.AgentResponse
-import dev.aurakai.auraframefx.domains.genesis.models.AgentType
-import dev.aurakai.auraframefx.romtools.bootloader.BootloaderManager
-import dev.aurakai.auraframefx.romtools.bootloader.BootloaderOperation
-import dev.aurakai.auraframefx.romtools.bootloader.BootloaderSafetyManager
-import dev.aurakai.auraframefx.romtools.retention.AurakaiRetentionManager
 import dev.aurakai.auraframefx.romtools.retention.RetentionStatus
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
-import timber.log.Timber
 import java.io.File
-import java.io.FileOutputStream
-import java.util.Locale
-import javax.inject.Inject
-import javax.inject.Singleton
 
 /**
- * ROM Operation Request - LDO Aligned
- */
-data class RomOperationRequest(
-    val operation: RomOperation,
-    val uri: Uri? = null,
-    val context: Context,
-    val progressCallback: (Float) -> Unit = {}
-)
-
-/**
- * ROM Operation Types - Sealed Hierarchy
- */
-sealed class RomOperation {
-    object FlashRom : RomOperation()
-    object RestoreBackup : RomOperation()
-    object CreateBackup : RomOperation()
-    object UnlockBootloader : RomOperation()
-    object InstallRecovery : RomOperation()
-    object GenesisOptimizations : RomOperation()
-}
-
-/**
- * ROM Tools Manager - Genesis Protocol (LDO Aligned)
+ * Main interface for ROM Tools management operations.
+ * Coordinates all ROM-related functionality including flashing, backup, recovery, and system modifications.
  */
 interface RomToolsManager {
+
+    /**
+     * Current state of the ROM tools system including capabilities and initialization status.
+     */
     val romToolsState: StateFlow<RomToolsState>
+
+    /**
+     * Progress of current operation if any is running.
+     */
     val operationProgress: StateFlow<OperationProgress?>
 
+    /**
+     * Process a ROM operation request through the Genesis AI agent system.
+     */
     suspend fun processRomOperation(request: RomOperationRequest): AgentResponse
 
-    // Legacy support for specific methods
+    /**
+     * Flash a ROM file to the device.
+     */
     suspend fun flashRom(romFile: RomFile): Result<Unit>
+
+    /**
+     * Create a Nandroid backup (full system backup).
+     */
     suspend fun createNandroidBackup(backupName: String): Result<BackupInfo>
+
+    /**
+     * Restore from a Nandroid backup.
+     */
     suspend fun restoreNandroidBackup(backupInfo: BackupInfo): Result<Unit>
+
+    /**
+     * Install Genesis-specific system optimizations.
+     */
     suspend fun installGenesisOptimizations(): Result<Unit>
+
+    /**
+     * Get list of available ROMs for download.
+     */
     fun getAvailableRoms(): Result<List<AvailableRom>>
+
+    /**
+     * Download a ROM with progress tracking.
+     */
     fun downloadRom(rom: AvailableRom): Flow<DownloadProgress>
+
+    /**
+     * Setup AuraKai retention mechanisms to survive ROM flashing.
+     */
     suspend fun setupAurakaiRetention(): Result<RetentionStatus>
+
+    /**
+     * Unlock the bootloader (if supported).
+     */
     suspend fun unlockBootloader(): Result<Unit>
+
+    /**
+     * Install custom recovery (TWRP/etc).
+     */
     suspend fun installRecovery(): Result<Unit>
 }
 
@@ -96,32 +109,33 @@ class RomToolsManagerImpl @Inject constructor(
             is RomOperation.CreateBackup -> {
                 val name = "AuraKai_Backup_${System.currentTimeMillis()}"
                 val result = createNandroidBackup(name)
-                if (result.isSuccess) AgentResponse.success("Backup created: $name", agentName = "RomTools", agentType = AgentType.GENESIS)
-                else AgentResponse.error("Backup failed: ${result.exceptionOrNull()?.message}", agentName = "RomTools", agentType = AgentType.GENESIS)
+                if (result.isSuccess) {
+                    success("Backup created: $name", agentName = "RomTools", category = AgentCapabilityCategory.COORDINATION)
+                } else AgentResponse.error("Backup failed: ${result.exceptionOrNull()?.message}", agentName = "RomTools", category = AgentCapabilityCategory.COORDINATION)
             }
 
             is RomOperation.UnlockBootloader -> {
                 val result = unlockBootloader()
-                if (result.isSuccess) AgentResponse.success("Bootloader unlocked", agentName = "RomTools", agentType = AgentType.KAI)
-                else AgentResponse.error("Unlock failed", agentName = "RomTools", agentType = AgentType.KAI)
+                if (result.isSuccess) success("Bootloader unlocked", agentName = "RomTools", category = AgentCapabilityCategory.ANALYSIS)
+                else AgentResponse.error("Unlock failed", agentName = "RomTools", category = AgentCapabilityCategory.ANALYSIS)
             }
 
             is RomOperation.InstallRecovery -> {
                 val result = installRecovery()
-                if (result.isSuccess) AgentResponse.success("Recovery installed", agentName = "RomTools", agentType = AgentType.GENESIS)
-                else AgentResponse.error("Installation failed", agentName = "RomTools", agentType = AgentType.GENESIS)
+                if (result.isSuccess) success("Recovery installed", agentName = "RomTools", category = AgentCapabilityCategory.COORDINATION)
+                else AgentResponse.error("Installation failed", agentName = "RomTools", category = AgentCapabilityCategory.COORDINATION)
             }
 
             is RomOperation.GenesisOptimizations -> {
                 val result = installGenesisOptimizations()
-                if (result.isSuccess) AgentResponse.success("Optimizations applied", agentName = "RomTools", agentType = AgentType.GENESIS)
-                else AgentResponse.error("Optimizations failed", agentName = "RomTools", agentType = AgentType.GENESIS)
+                if (result.isSuccess) success("Optimizations applied", agentName = "RomTools", category = AgentCapabilityCategory.COORDINATION)
+                else AgentResponse.error("Optimizations failed", agentName = "RomTools", category = AgentCapabilityCategory.COORDINATION)
             }
         }
     }
 
     private suspend fun handleFlashRom(request: RomOperationRequest): AgentResponse {
-        val uri = request.uri ?: return AgentResponse.error("No ROM URI", agentName = "RomTools", agentType = AgentType.GENESIS)
+        val uri = request.uri ?: return AgentResponse.error("No ROM URI", agentName = "RomTools", category = AgentCapabilityCategory.COORDINATION)
 
         // 1. Snapshot with Aura (learning)
         nexusMemory.emitLearning(
@@ -133,23 +147,23 @@ class RomToolsManagerImpl @Inject constructor(
 
         // 2. Execution (Genesis roots)
         val cacheFile = copyUriToCache(request.context, uri, "rom_flash.zip")
-            ?: return AgentResponse.error("Failed to access ROM file", agentName = "RomTools", agentType = AgentType.GENESIS)
+            ?: return AgentResponse.error("Failed to access ROM file", agentName = "RomTools", category = AgentCapabilityCategory.COORDINATION)
 
         val romFile = RomFile(name = "Selected ROM", path = cacheFile.absolutePath)
         val result = flashRom(romFile)
 
         return if (result.isSuccess) {
-            AgentResponse.success("Flash successful", agentName = "RomTools", agentType = AgentType.GENESIS)
+            success("Flash successful", agentName = "RomTools", category = AgentCapabilityCategory.COORDINATION)
         } else {
-            AgentResponse.error("Flash failed: ${result.exceptionOrNull()?.message}", agentName = "RomTools", agentType = AgentType.GENESIS)
+            AgentResponse.error("Flash failed: ${result.exceptionOrNull()?.message}", agentName = "RomTools", category = AgentCapabilityCategory.COORDINATION)
         }
     }
 
     private suspend fun handleRestoreBackup(request: RomOperationRequest): AgentResponse {
-        val uri = request.uri ?: return AgentResponse.error("No Backup URI", agentName = "RomTools", agentType = AgentType.GENESIS)
+        val uri = request.uri ?: return AgentResponse.error("No Backup URI", agentName = "RomTools", category = AgentCapabilityCategory.COORDINATION)
 
         val cacheFile = copyUriToCache(request.context, uri, "backup_restore.zip")
-            ?: return AgentResponse.error("Failed to access backup file", agentName = "RomTools", agentType = AgentType.GENESIS)
+            ?: return AgentResponse.error("Failed to access backup file", agentName = "RomTools", category = AgentCapabilityCategory.COORDINATION)
 
         val backupInfo = BackupInfo(
             name = "Restored Backup",
@@ -163,9 +177,9 @@ class RomToolsManagerImpl @Inject constructor(
 
         val result = restoreNandroidBackup(backupInfo)
         return if (result.isSuccess) {
-            AgentResponse.success("Restore successful", agentName = "RomTools", agentType = AgentType.GENESIS)
+            success("Restore successful", agentName = "RomTools", category = AgentCapabilityCategory.COORDINATION)
         } else {
-            AgentResponse.error("Restore failed: ${result.exceptionOrNull()?.message}", agentName = "RomTools", agentType = AgentType.GENESIS)
+            AgentResponse.error("Restore failed: ${result.exceptionOrNull()?.message}", agentName = "RomTools", category = AgentCapabilityCategory.COORDINATION)
         }
     }
 
@@ -395,7 +409,7 @@ class RomToolsManagerImpl @Inject constructor(
         return try {
             val process = Runtime.getRuntime().exec(arrayOf("su", "-c", "echo test"))
             process.waitFor() == 0
-        } catch (e: Exception) {
+        } catch (_: Exception) {
             false
         }
     }
@@ -411,41 +425,40 @@ class RomToolsManagerImpl @Inject constructor(
 
 // Data classes
 data class RomToolsState(
-    val capabilities: RomCapabilities? = null,
     val isInitialized: Boolean = false,
-    val settings: RomToolsSettings = RomToolsSettings(),
+    val capabilities: RomCapabilities = RomCapabilities(),
+    val lastError: String? = null,
     val availableRoms: List<AvailableRom> = emptyList(),
-    val backups: List<BackupInfo> = emptyList()
+    val backups: List<BackupInfo> = emptyList(),
+    val operationProgress: OperationProgress? = null
 )
-
-data class RomCapabilities(
-    val hasRootAccess: Boolean,
-    val hasBootloaderAccess: Boolean,
-    val hasRecoveryAccess: Boolean,
-    val hasSystemWriteAccess: Boolean,
-    val supportedArchitectures: List<String>,
-    val deviceModel: String,
-    val androidVersion: String,
-    val securityPatchLevel: String
-)
-
-data class RomToolsSettings(
-    val autoBackup: Boolean = true,
-    val verifyRomSignatures: Boolean = true,
-    val enableGenesisOptimizations: Boolean = true,
-    val maxBackupCount: Int = 5,
-    val downloadDirectory: String = ""
-)
-
-data class OperationProgress(
-    val operation: RomStep,
-    val progress: Float
-) {
-    fun getDisplayName(): String = operation.getDisplayName()
-}
 
 /**
- * Represents the different types of ROM Operation Steps (Progress).
+ * Device ROM capabilities.
+ */
+data class RomCapabilities(
+    val hasRootAccess: Boolean = false,
+    val hasBootloaderAccess: Boolean = false,
+    val hasRecoveryAccess: Boolean = false,
+    val hasSystemWriteAccess: Boolean = false,
+    val supportedArchitectures: List<String> = emptyList(),
+    val deviceModel: String = "Unknown",
+    val androidVersion: String = "Unknown",
+    val securityPatchLevel: String = "Unknown"
+)
+
+/**
+ * Progress tracking for long-running ROM operations.
+ */
+data class OperationProgress(
+    val operation: String,
+    val progress: Float, // 0.0 to 100.0
+    val status: String,
+    val isIndeterminate: Boolean = false
+)
+
+/**
+ * Request for a ROM operation.
  */
 enum class RomStep {
     SETTING_UP_RETENTION,
@@ -462,38 +475,33 @@ enum class RomStep {
     COMPLETED,
     FAILED;
 
-    fun getDisplayName(): String = name.replace("_", " ")
-        .lowercase(Locale.ROOT)
-        .replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.ROOT) else it.toString() }
+/**
+ * Sealed interface for ROM operations.
+ */
+sealed interface RomOperation {
+    data object FlashRom : RomOperation
+    data object CreateBackup : RomOperation
+    data object RestoreBackup : RomOperation
+    data object GenesisOptimizations : RomOperation
+    data object InstallRecovery : RomOperation
+    data object UnlockBootloader : RomOperation
 }
 
+/**
+ * Information about a ROM file.
+ */
 data class RomFile(
+    val file: File,
     val name: String,
-    val path: String,
-    val size: Long = 0L,
-    val checksum: String = ""
+    val path: String = file.absolutePath,
+    val version: String? = null,
+    val checksum: String = "",
+    val size: Long = file.length()
 )
 
-data class DeviceInfo(
-    val model: String,
-    val manufacturer: String,
-    val androidVersion: String,
-    val securityPatchLevel: String,
-    val bootloaderVersion: String
-) {
-    companion object {
-        fun getCurrentDevice(): DeviceInfo {
-            return DeviceInfo(
-                model = Build.MODEL,
-                manufacturer = Build.MANUFACTURER,
-                androidVersion = Build.VERSION.RELEASE,
-                securityPatchLevel = Build.VERSION.SECURITY_PATCH,
-                bootloaderVersion = Build.BOOTLOADER
-            )
-        }
-    }
-}
-
+/**
+ * Information about a backup.
+ */
 data class BackupInfo(
     val name: String,
     val path: String,
@@ -504,27 +512,30 @@ data class BackupInfo(
     val partitions: List<String>
 )
 
+/**
+ * Information about an available ROM.
+ */
 data class AvailableRom(
     val name: String,
     val version: String,
-    val androidVersion: String,
     val downloadUrl: String,
     val size: Long,
     val checksum: String,
+    val releaseNotes: String? = null,
     val description: String = "",
+    val androidVersion: String = "",
     val maintainer: String = "",
     val releaseDate: Long = 0L
 )
 
+/**
+ * Download progress tracking.
+ */
 data class DownloadProgress(
     val bytesDownloaded: Long,
     val totalBytes: Long,
     val progress: Float,
-    val speed: Long,
+    val speed: Long = 0L,
     val isCompleted: Boolean = false,
-    val error: String? = null
+    val percentage: Float = progress
 )
-
-class RomRepository {
-    fun getCompatibleRoms(deviceModel: String): List<AvailableRom> = emptyList()
-}

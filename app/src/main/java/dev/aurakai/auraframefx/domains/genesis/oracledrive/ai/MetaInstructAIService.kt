@@ -2,17 +2,17 @@ package dev.aurakai.auraframefx.domains.genesis.oracledrive.ai
 
 import android.content.Context
 import dev.aurakai.auraframefx.agents.growthmetrics.metareflection.MetaReflectionEngine
+import dev.aurakai.auraframefx.domains.aura.TaskExecutionManager
 import dev.aurakai.auraframefx.domains.cascade.ai.base.Agent
+import dev.aurakai.auraframefx.domains.cascade.utils.AuraFxLogger
 import dev.aurakai.auraframefx.domains.cascade.utils.context.ContextManager
 import dev.aurakai.auraframefx.domains.cascade.utils.memory.MemoryManager
-import dev.aurakai.auraframefx.domains.kai.TaskScheduler
-import dev.aurakai.auraframefx.domains.aura.TaskExecutionManager
-import dev.aurakai.auraframefx.domains.kai.ErrorHandler
-import dev.aurakai.auraframefx.domains.genesis.oracledrive.cloud.CloudStatusMonitor
 import dev.aurakai.auraframefx.domains.genesis.models.AgentResponse
 import dev.aurakai.auraframefx.domains.genesis.models.AgentType
 import dev.aurakai.auraframefx.domains.genesis.models.AiRequest
-import dev.aurakai.auraframefx.domains.cascade.utils.AuraFxLogger
+import dev.aurakai.auraframefx.domains.genesis.oracledrive.cloud.CloudStatusMonitor
+import dev.aurakai.auraframefx.domains.kai.ErrorHandler
+import dev.aurakai.auraframefx.domains.kai.TaskScheduler
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flowOf
 import javax.inject.Inject
@@ -69,7 +69,8 @@ class MetaInstructAIService @Inject constructor(
     ): AgentResponse {
         logger.info("MetaInstructAIService", "Processing request: ${request.query}")
 
-        val effectiveInstructions = metaReflectionEngine.getEffectiveInstructions(request.agentType.name)
+        val effectiveInstructions =
+            metaReflectionEngine.getEffectiveInstructions(request.agentType.name)
 
         // Build the augmented query with meta-instructions
         if (effectiveInstructions.isNotEmpty()) {
@@ -93,9 +94,9 @@ class MetaInstructAIService @Inject constructor(
 
         return AgentResponse.success(
             content = "📚 **MetaInstruct Synthesis (Vertex Enhanced):**\n\n$instructionText",
-            confidence = 0.95f,
             agentName = "MetaInstruct",
-            agentType = AgentType.METAINSTRUCT
+            agentType = AgentType.METAINSTRUCT,
+            confidence = 0.95f,
         )
     }
 
@@ -103,9 +104,9 @@ class MetaInstructAIService @Inject constructor(
         return flowOf(
             AgentResponse.success(
                 content = "MetaInstruct flow: ${request.query}",
-                confidence = 0.9f,
                 agentName = "MetaInstruct",
-                agentType = AgentType.METAINSTRUCT
+                agentType = AgentType.METAINSTRUCT,
+                confidence = 0.9f,
             )
         )
     }

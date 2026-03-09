@@ -26,14 +26,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.lifecycle.ViewModelStoreOwner
 import androidx.navigation.NavController
-import dev.aurakai.auraframefx.navigation.ReGenesisNavHost
+import dev.aurakai.auraframefx.navigation.NavDestination
 import dev.aurakai.auraframefx.domains.aura.ui.components.SubmenuScaffold
-import dev.aurakai.auraframefx.navigation.gates.components.SubmenuItem
 import dev.aurakai.auraframefx.domains.aura.ui.viewmodels.AgentViewModel
+import dev.aurakai.auraframefx.navigation.ReGenesisNavHost
+import dev.aurakai.auraframefx.navigation.gates.components.SubmenuItem
 
 /**
  * Agent Hub Gate Submenu - NOW WIRED TO REAL AGENTS
@@ -44,13 +43,7 @@ import dev.aurakai.auraframefx.domains.aura.ui.viewmodels.AgentViewModel
 @Composable
 fun AgentHubSubmenuScreen(
     navController: NavController,
-    viewModel: AgentViewModel = hiltViewModel(
-        checkNotNull<ViewModelStoreOwner>(
-            LocalViewModelStoreOwner.current
-        ) {
-                "No ViewModelStoreOwner was provided via LocalViewModelStoreOwner"
-            }, null
-    )
+    viewModel: AgentViewModel = hiltViewModel()
 ) {
     val menuItems = listOf(
         SubmenuItem(
@@ -126,7 +119,7 @@ fun AgentHubSubmenuScreen(
     val activeAgentCount = remember(allAgents, activeAgent) {
         allAgents.count { agent ->
             agent.name == activeAgent?.name ||
-            activeTasks.any { it.agentName == agent.name && it.status == AgentViewModel.AgentTaskStatus.IN_PROGRESS }
+                    activeTasks.any { it.agentName == agent.name && it.status == AgentViewModel.AgentTaskStatus.IN_PROGRESS }
         }
     }
 

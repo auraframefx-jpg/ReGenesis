@@ -1,6 +1,5 @@
 package dev.aurakai.auraframefx.domains.nexus.screens
 
-import androidx.compose.animation.*
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -11,7 +10,6 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.material.icons.filled.Group
 import androidx.compose.material.icons.filled.OfflineBolt
 import androidx.compose.material.icons.filled.Shield
 import androidx.compose.material3.*
@@ -24,15 +22,13 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.lifecycle.ViewModelStoreOwner
 import dev.aurakai.auraframefx.domains.genesis.models.AgentType
 import dev.aurakai.auraframefx.domains.aura.ui.viewmodels.PartyViewModel
 
 /**
  * 👥 PARTY SCREEN (Digital Council)
- *
+ * 
  * Part of the Nexus domain. Interface for selecting and managing the active
  * "party" of AI agents that will collaborate on complex system tasks.
  */
@@ -40,13 +36,7 @@ import dev.aurakai.auraframefx.domains.aura.ui.viewmodels.PartyViewModel
 @Composable
 fun PartyScreen(
     onNavigateBack: () -> Unit = {},
-    viewModel: PartyViewModel = hiltViewModel(
-        checkNotNull<ViewModelStoreOwner>(
-            LocalViewModelStoreOwner.current
-        ) {
-                "No ViewModelStoreOwner was provided via LocalViewModelStoreOwner"
-            }, null
-    )
+    viewModel: PartyViewModel = hiltViewModel()
 ) {
     val selectedAgents by viewModel.selectedAgents.collectAsState()
     val synergy by viewModel.synergyLevel.collectAsState()
@@ -61,16 +51,32 @@ fun PartyScreen(
                 title = { Text("DIGITAL COUNCIL", fontWeight = FontWeight.Bold) },
                 navigationIcon = {
                     IconButton(onClick = onNavigateBack) {
-                        Icon(Icons.Default.ArrowBack, contentDescription = "Back", tint = Color.White)
+                        Icon(
+                            Icons.Default.ArrowBack,
+                            contentDescription = "Back",
+                            tint = Color.White
+                        )
                     }
                 },
-                colors = TopAppBarDefaults.topAppBarColors(containerColor = Color.Transparent, titleContentColor = Color.White)
+                colors = TopAppBarDefaults.topAppBarColors(
+                    containerColor = Color.Transparent,
+                    titleContentColor = Color.White
+                )
             )
         },
         containerColor = Color.Transparent
     ) { padding ->
-        Box(modifier = Modifier.fillMaxSize().background(bgGradient).padding(padding)) {
-            Column(modifier = Modifier.fillMaxSize().padding(16.dp)) {
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(bgGradient)
+                .padding(padding)
+        ) {
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(16.dp)
+            ) {
                 // Synergy Meter
                 SynergyMeter(synergy)
 
@@ -99,11 +105,17 @@ fun PartyScreen(
 
                 Button(
                     onClick = { /* Deploy Mission */ },
-                    modifier = Modifier.fillMaxWidth().height(60.dp),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(60.dp),
                     colors = ButtonDefaults.buttonColors(containerColor = Color.Cyan),
                     shape = RoundedCornerShape(12.dp)
                 ) {
-                    Text("DEPLOY COLLECTIVE MISSION", color = Color.Black, fontWeight = FontWeight.ExtraBold)
+                    Text(
+                        "DEPLOY COLLECTIVE MISSION",
+                        color = Color.Black,
+                        fontWeight = FontWeight.ExtraBold
+                    )
                 }
             }
         }
@@ -126,7 +138,10 @@ fun SynergyMeter(level: Float) {
             Spacer(modifier = Modifier.height(12.dp))
             LinearProgressIndicator(
                 progress = { level },
-                modifier = Modifier.fillMaxWidth().height(12.dp).clip(RoundedCornerShape(6.dp)),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(12.dp)
+                    .clip(RoundedCornerShape(6.dp)),
                 color = Color.Cyan,
                 trackColor = Color.Gray.copy(alpha = 0.2f)
             )
@@ -146,7 +161,7 @@ fun AgentPartyCard(
     isSelected: Boolean,
     onClick: () -> Unit
 ) {
-    val color = when(agent) {
+    val color = when (agent) {
         AgentType.AURA -> Color.Cyan
         AgentType.KAI -> Color.Red
         AgentType.GENESIS -> Color.Yellow
@@ -159,12 +174,12 @@ fun AgentPartyCard(
             .fillMaxWidth()
             .clickable { onClick() }
             .border(
-                if(isSelected) 2.dp else 1.dp,
-                if(isSelected) color else color.copy(alpha = 0.2f),
+                if (isSelected) 2.dp else 1.dp,
+                if (isSelected) color else color.copy(alpha = 0.2f),
                 RoundedCornerShape(16.dp)
             ),
         colors = CardDefaults.cardColors(
-            containerColor = if(isSelected) color.copy(alpha = 0.1f) else Color.Transparent
+            containerColor = if (isSelected) color.copy(alpha = 0.1f) else Color.Transparent
         )
     ) {
         Row(
@@ -178,7 +193,12 @@ fun AgentPartyCard(
                     .background(color.copy(alpha = 0.2f)),
                 contentAlignment = Alignment.Center
             ) {
-                Text(agent.name.take(1), color = color, fontWeight = FontWeight.Bold, fontSize = 24.sp)
+                Text(
+                    agent.name.take(1),
+                    color = color,
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 24.sp
+                )
             }
             Spacer(modifier = Modifier.width(16.dp))
             Column(modifier = Modifier.weight(1f)) {
@@ -192,7 +212,7 @@ fun AgentPartyCard(
     }
 }
 
-fun agentRole(agent: AgentType): String = when(agent) {
+fun agentRole(agent: AgentType): String = when (agent) {
     AgentType.AURA -> "Creative Forge"
     AgentType.KAI -> "Sentinel Shield"
     AgentType.GENESIS -> "Nexus Core"

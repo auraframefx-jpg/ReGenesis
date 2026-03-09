@@ -1,13 +1,13 @@
 package dev.aurakai.auraframefx.integrations.grok
 
-import dev.aurakai.auraframefx.domains.cascade.ai.base.BaseAgent
 import dev.aurakai.auraframefx.domains.aura.SystemOverlayManager
+import dev.aurakai.auraframefx.domains.cascade.ai.base.BaseAgent
+import dev.aurakai.auraframefx.domains.cascade.utils.AuraFxLogger
 import dev.aurakai.auraframefx.domains.cascade.utils.context.ContextManager
 import dev.aurakai.auraframefx.domains.cascade.utils.memory.MemoryManager
 import dev.aurakai.auraframefx.domains.genesis.models.AgentResponse
 import dev.aurakai.auraframefx.domains.genesis.models.AgentType
 import dev.aurakai.auraframefx.domains.genesis.models.AiRequest
-import dev.aurakai.auraframefx.domains.cascade.utils.AuraFxLogger
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -131,7 +131,7 @@ class GrokAgent @Inject constructor(
         if (!_agentState.value.isConnected) {
             return AgentResponse.error(
                 message = "Grok is not connected. Initialize with valid API key.",
-                agentName = agentName
+                agentName = agentName,
             )
         }
 
@@ -192,7 +192,7 @@ class GrokAgent @Inject constructor(
             )
             AgentResponse.error(
                 message = "Grok encountered an error: ${e.message}",
-                agentName = agentName
+                agentName = agentName,
             )
         } finally {
             _agentState.value = _agentState.value.copy(isProcessing = false)

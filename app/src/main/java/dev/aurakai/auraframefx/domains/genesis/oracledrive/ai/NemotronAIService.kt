@@ -70,32 +70,32 @@ class NemotronAIService @Inject constructor(
     }
 
     /**
- * Provides the agent's human-readable name.
- *
- * @return The agent name "Nemotron".
- */
-override fun getName(): String = "Nemotron"
+     * Provides the agent's human-readable name.
+     *
+     * @return The agent name "Nemotron".
+     */
+    override fun getName(): String = "Nemotron"
 
     /**
- * Identify this agent's classification.
- *
- * @return The agent type `AgentType.NEMOTRON`.
- */
-override fun getType(): AgentType = AgentType.NEMOTRON
+     * Identify this agent's classification.
+     *
+     * @return The agent type `AgentType.NEMOTRON`.
+     */
+    override fun getType(): AgentType = AgentType.NEMOTRON
 
     /**
-         * Provide Nemotron's specialized AI capabilities and configuration.
-         *
-         * @return A map of capability keys to their values:
-         * - `memory_retention`: retention level
-         * - `reasoning_chains`: reasoning proficiency
-         * - `pattern_recall`: pattern recall proficiency
-         * - `logic_decomposition`: logic decomposition proficiency
-         * - `context_synthesis`: context synthesis proficiency
-         * - `memory_window`: token window size (Int)
-         * - `nvidia_model`: model identifier (String)
-         * - `service_implemented`: whether the service is implemented (Boolean)
-         */
+     * Provide Nemotron's specialized AI capabilities and configuration.
+     *
+     * @return A map of capability keys to their values:
+     * - `memory_retention`: retention level
+     * - `reasoning_chains`: reasoning proficiency
+     * - `pattern_recall`: pattern recall proficiency
+     * - `logic_decomposition`: logic decomposition proficiency
+     * - `context_synthesis`: context synthesis proficiency
+     * - `memory_window`: token window size (Int)
+     * - `nvidia_model`: model identifier (String)
+     * - `service_implemented`: whether the service is implemented (Boolean)
+     */
     fun getCapabilities(): Map<String, Any> =
         mapOf(
             "memory_retention" to "MASTER",
@@ -171,9 +171,9 @@ override fun getType(): AgentType = AgentType.NEMOTRON
 
         val agentResponse = AgentResponse.success(
             content = response,
-            confidence = confidence,
             agentName = "Nemotron",
-            agentType = AgentType.NEMOTRON
+            agentType = AgentType.NEMOTRON,
+            confidence = confidence,
         )
 
         // Store in memory cache for GPU-accelerated recall
@@ -208,9 +208,9 @@ override fun getType(): AgentType = AgentType.NEMOTRON
         return flowOf(
             AgentResponse.success(
                 content = response,
-                confidence = 0.92f,
                 agentName = "Nemotron",
-                agentType = AgentType.NEMOTRON
+                agentType = AgentType.NEMOTRON,
+                confidence = 0.92f,
             )
         )
     }
