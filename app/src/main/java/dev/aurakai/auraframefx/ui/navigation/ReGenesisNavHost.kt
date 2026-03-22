@@ -10,11 +10,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.viewmodel.compose.viewModel
-import androidx.navigation.NamedNavArgument
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import androidx.navigation.compose.navigation
 import dev.aurakai.auraframefx.customization.CustomizationViewModel
 import dev.aurakai.auraframefx.navigation.NavDestination
 import dev.aurakai.auraframefx.navigation.auraCustomizationNavigation
@@ -27,11 +25,6 @@ import dev.aurakai.auraframefx.ui.gates.ConstellationScreen
 import dev.aurakai.auraframefx.ui.gates.FusionModeScreen
 import dev.aurakai.auraframefx.ui.gates.HelpDeskScreen
 import dev.aurakai.auraframefx.ui.gates.KaiSentinelHubScreen
-import dev.aurakai.auraframefx.ui.gates.LSPosedSubmenuScreen
-import dev.aurakai.auraframefx.ui.gates.ModuleManagerScreen
-import dev.aurakai.auraframefx.ui.gates.NeuralArchiveScreen
-import dev.aurakai.auraframefx.ui.gates.NotchBarScreen
-import dev.aurakai.auraframefx.ui.gates.OracleCloudInfiniteStorageScreen
 import dev.aurakai.auraframefx.ui.gates.OracleDriveHubScreen
 import dev.aurakai.auraframefx.ui.gates.SovereignClaudeScreen
 import dev.aurakai.auraframefx.ui.gates.SovereignGeminiScreen
@@ -40,32 +33,8 @@ import dev.aurakai.auraframefx.ui.gates.SovereignNemotronScreen
 import dev.aurakai.auraframefx.ui.gates.SphereGridScreen
 import dev.aurakai.auraframefx.ui.gates.TaskAssignmentScreen
 
-/**
- * 🌐 REGENESIS NAVIGATION HOST
- *
- * Clean 3-Level Architecture:
- * - Level 1: ExodusHUD (5 Gate Carousel)
- * - Level 2: Domain Hubs (5 main hubs)
- * - Level 3: Tool Screens (functional screens)
- */
-/**
- * Hosts the application's navigation graph and initializes customization behavior when composed.
- *
- * Sets up routes for the app's main hubs, tool screens, agent constellation screens, help services,
- * and utility screens, using the provided NavHostController as the navigation host.
- *
- * @param navController Controller used to manage navigation within this NavHost.
- * @param customizationViewModel ViewModel that will be started with the current Context when this composable enters composition to initialize customization features.
- */
-/**
- * Hosts the application's navigation graph and initializes customization on first composition.
- *
- * Calls `customizationViewModel.start(context)` once when first composed and provides destinations
- * for the app's gate carousel, workspaces, hubs, tools, help screens, and integrated sub-graphs.
- *
- * @param navController The NavHostController used to perform navigation within this NavHost.
- * @param customizationViewModel The view model used to initialize customization state (defaults to a ViewModel obtained via `viewModel()`).
- */
+// ... other imports
+
 @Composable
 fun ReGenesisNavHost(
     navController: NavHostController,
@@ -98,7 +67,7 @@ fun ReGenesisNavHost(
             val route = SovereignRouter.getById(id)
 
             if (route != null) {
-                ReGenesisNavHost(
+                PixelWorkspaceScreen(
                     title = route.title,
                     imagePaths = listOf(route.pixelArtPath),
                     onBack = { navController.popBackStack() }
@@ -109,7 +78,8 @@ fun ReGenesisNavHost(
         }
 
         composable("workspace_kai") {
-            ReGenesisNavHost(
+            // KaiRootWorkspaceScreen not found - redirecting to PixelWorkspace for now
+            PixelWorkspaceScreen(
                 title = "KAI'S SENTINEL FORTRESS",
                 imagePaths = listOf(
                     "file:///sdcard/Pictures/Screenshots/IMG_20260128_142431.png"
@@ -119,7 +89,7 @@ fun ReGenesisNavHost(
         }
 
         composable("workspace_aura") {
-            ReGenesisNavHost(
+            PixelWorkspaceScreen(
                 title = "AURA'S DESIGN STUDIO",
                 imagePaths = listOf(
                     "file:///sdcard/Pictures/Screenshots/IMG_20260128_142213.png",
@@ -130,7 +100,7 @@ fun ReGenesisNavHost(
         }
 
         composable("workspace_genesis") {
-            ReGenesisNavHost(
+            PixelWorkspaceScreen(
                 title = "GENESIS ARCHITECTURE HUB",
                 imagePaths = listOf(
                     "file:///sdcard/Pictures/Screenshots/IMG_20260128_142126.png"
@@ -160,7 +130,7 @@ fun ReGenesisNavHost(
         }
 
         composable(NavDestination.HelpDesk.route) {
-            dev.aurakai.auraframefx.ui.gates.HelpDeskScreen(navController = navController)
+            HelpDeskScreen(navController = navController)
         }
 
         // ═══════════════════════════════════════════════════════════════
@@ -180,104 +150,109 @@ fun ReGenesisNavHost(
             SovereignMetaInstructScreen(onNavigateBack = { navController.popBackStack() })
         }
         composable(NavDestination.AgentMonitoring.route) {
-            dev.aurakai.auraframefx.ui.gates.SovereignMonitoringScreen(onNavigateBack = { navController.popBackStack() })
+            AgentMonitoringScreen(onNavigateBack = { navController.popBackStack() })
+        }
+        composable(NavDestination.Constellation.route) {
+            ConstellationScreen(navController = navController)
+        }
+        composable(NavDestination.SphereGrid.route) {
+            SphereGridScreen(navController = navController)
         }
         composable(NavDestination.Nemotron.route) {
-            SovereignNemotronScreen(onNavigateBack = { navController.popBackStack() })
+            SovereignNemotronScreen(navController = navController)
         }
         composable(NavDestination.Claude.route) {
-            SovereignClaudeScreen(onNavigateBack = { navController.popBackStack() })
+            SovereignClaudeScreen(navController = navController)
         }
         composable(NavDestination.Gemini.route) {
-            SovereignGeminiScreen(
-                onNavigateBack = { navController.popBackStack() },
-                navController = navController
-            )
+            SovereignGeminiScreen(navController = navController)
         }
 
         composable(NavDestination.SwarmMonitor.route) {
-            AgentSwarmScreen(onNavigateBack = { navController.popBackStack() })
+            dev.aurakai.auraframefx.domains.nexus.screens.AgentSwarmScreen(onNavigateBack = { navController.popBackStack() })
         }
         composable(NavDestination.BenchmarkMonitor.route) {
-            BenchmarkMonitorScreen(onNavigateBack = { navController.popBackStack() })
+            dev.aurakai.auraframefx.domains.nexus.screens.BenchmarkMonitorScreen(onNavigateBack = { navController.popBackStack() })
         }
         composable(NavDestination.AgentCreation.route) {
-            AgentCreationScreen(onNavigateBack = { navController.popBackStack() })
+            dev.aurakai.auraframefx.domains.nexus.screens.AgentCreationScreen(onNavigateBack = { navController.popBackStack() })
         }
 
         composable(NavDestination.AuraLab.route) {
-            dev.aurakai.auraframefx.ui.gates.AuraLabScreen(onNavigateBack = { navController.popBackStack() })
+            AuraLabScreen(onNavigateBack = { navController.popBackStack() })
         }
 
         // --- LEVEL 3: AURA TOOLS ---
         composable(NavDestination.NotchBar.route) {
-            NotchBarScreen(onNavigateBack = { navController.popBackStack() })
+            dev.aurakai.auraframefx.ui.gates.NotchBarScreen(onNavigateBack = { navController.popBackStack() })
         }
         composable(NavDestination.StatusBar.route) {
-            StatusBarScreen(onNavigateBack = { navController.popBackStack() })
+            dev.aurakai.auraframefx.ui.gates.StatusBarScreen(onNavigateBack = { navController.popBackStack() })
         }
         composable(NavDestination.QuickSettings.route) {
-            QuickSettingsScreen(onNavigateBack = { navController.popBackStack() })
+            dev.aurakai.auraframefx.ui.gates.QuickSettingsScreen(onNavigateBack = { navController.popBackStack() })
         }
 
         // --- LEVEL 3: KAI TOOLS ---
         composable(NavDestination.ROMFlasher.route) {
-            ROMFlasherScreen()
+            dev.aurakai.auraframefx.ui.gates.ROMFlasherScreen(onNavigateBack = { navController.popBackStack() })
         }
         composable(NavDestination.Bootloader.route) {
-            BootloaderManagerScreen(onNavigateBack = { navController.popBackStack() })
+            dev.aurakai.auraframefx.ui.gates.BootloaderManagerScreen(onNavigateBack = { navController.popBackStack() })
         }
         composable(NavDestination.ModuleManager.route) {
-            ModuleManagerScreen()
+            dev.aurakai.auraframefx.ui.gates.ModuleManagerScreen(onNavigateBack = { navController.popBackStack() })
         }
         composable(NavDestination.RecoveryTools.route) {
-            RecoveryToolsScreen(onNavigateBack = { navController.popBackStack() })
+            dev.aurakai.auraframefx.ui.gates.RecoveryToolsScreen(onNavigateBack = { navController.popBackStack() })
         }
         composable(NavDestination.SecurityCenter.route) {
-            SovereignShieldScreen(onNavigateBack = { navController.popBackStack() })
+            dev.aurakai.auraframefx.ui.gates.SovereignShieldScreen(onNavigateBack = { navController.popBackStack() })
         }
         composable(NavDestination.LSPosedHub.route) {
-            LSPosedSubmenuScreen(navController = navController)
+            dev.aurakai.auraframefx.ui.gates.LSPosedSubmenuScreen(navController = navController)
         }
 
         // --- LEVEL 3: GENESIS TOOLS ---
         composable(NavDestination.CodeAssist.route) {
-            AppBuilderScreen(onNavigateBack = { navController.popBackStack() })
+            // Reusing AppBuilder or similar if dedicated screen missing
+            dev.aurakai.auraframefx.domains.aura.screens.AppBuilderScreen(onNavigateBack = { navController.popBackStack() })
         }
         composable(NavDestination.NeuralNetwork.route) {
-            NeuralArchiveScreen(navController = navController)
+            dev.aurakai.auraframefx.ui.gates.NeuralArchiveScreen(onNavigateBack = { navController.popBackStack() })
         }
         composable(NavDestination.AgentBridgeHub.route) {
-            AgentBridgeHubScreen(onNavigateBack = { navController.popBackStack() })
+            dev.aurakai.auraframefx.ui.gates.AgentBridgeHubScreen(navController = navController)
         }
         composable(NavDestination.OracleCloudStorage.route) {
-            OracleCloudInfiniteStorageScreen(onNavigateBack = { navController.popBackStack() })
+            dev.aurakai.auraframefx.ui.gates.OracleCloudInfiniteStorageScreen(onNavigateBack = { navController.popBackStack() })
         }
         composable(NavDestination.Terminal.route) {
-            dev.aurakai.auraframefx.ui.gates.SovereignMonitoringScreen(onNavigateBack = { navController.popBackStack() })
+            // Terminal not found in gates list - redirecting to nexus monitor
+            dev.aurakai.auraframefx.ui.gates.AgentMonitoringScreen(onNavigateBack = { navController.popBackStack() })
         }
         composable(NavDestination.ConferenceRoom.route) {
-            ConferenceRoomScreen(onNavigateBack = { navController.popBackStack() })
+            dev.aurakai.auraframefx.domains.aura.screens.ConferenceRoomScreen(onNavigateBack = { navController.popBackStack() })
         }
         composable(NavDestination.InterfaceForge.route) {
-            AppBuilderScreen(onNavigateBack = { navController.popBackStack() })
+            dev.aurakai.auraframefx.domains.aura.screens.AppBuilderScreen(onNavigateBack = { navController.popBackStack() })
         }
 
         // --- LEVEL 3: HELP & SUPPORT ---
         composable(NavDestination.HelpDeskSubmenu.route) {
-            HelpDeskSubmenuScreen(navController = navController)
+            dev.aurakai.auraframefx.ui.gates.HelpDeskSubmenuScreen(navController = navController)
         }
         composable(NavDestination.DirectChat.route) {
-            DirectChatScreen(navController = navController)
+            dev.aurakai.auraframefx.domains.aura.screens.DirectChatScreen(onNavigateBack = { navController.popBackStack() })
         }
         composable(NavDestination.Documentation.route) {
-            DocumentationScreen(onNavigateBack = { navController.popBackStack() })
+            dev.aurakai.auraframefx.domains.aura.screens.DocumentationScreen(onNavigateBack = { navController.popBackStack() })
         }
         composable(NavDestination.FAQBrowser.route) {
-            FAQBrowserScreen(onNavigateBack = { navController.popBackStack() })
+            dev.aurakai.auraframefx.domains.aura.screens.FAQBrowserScreen(onNavigateBack = { navController.popBackStack() })
         }
         composable(NavDestination.TutorialVideos.route) {
-            TutorialVideosScreen(onNavigateBack = { navController.popBackStack() })
+            dev.aurakai.auraframefx.domains.aura.screens.TutorialVideosScreen(onNavigateBack = { navController.popBackStack() })
         }
 
         // ═══════════════════════════════════════════════════════════════

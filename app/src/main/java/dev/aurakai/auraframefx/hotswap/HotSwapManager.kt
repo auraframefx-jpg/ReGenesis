@@ -6,7 +6,6 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.serialization.Serializable
-import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import timber.log.Timber
 import java.io.File
@@ -327,7 +326,13 @@ data class GateConfig(
             GateConfig("help_gate", "HELP SERVICES", "help_gate", color = "#00FFFF", order = 0),
             GateConfig("aura_gate", "AURA GATE", "aura_gate", color = "#FF1493", order = 1),
             GateConfig("kai_gate", "KAI GATE", "kai_gate", color = "#FF00FF", order = 2),
-            GateConfig("genesis_gate", "GENESIS GATE", "genesis_gate", color = "#00D9FF", order = 3),
+            GateConfig(
+                "genesis_gate",
+                "GENESIS GATE",
+                "genesis_gate",
+                color = "#00D9FF",
+                order = 3
+            ),
             GateConfig("cascade_gate", "CASCADE HUB", "cascade_gate", color = "#00CED1", order = 4),
             GateConfig("agent_nexus", "AGENT NEXUS", "agent_nexus", color = "#4169E1", order = 5)
         )

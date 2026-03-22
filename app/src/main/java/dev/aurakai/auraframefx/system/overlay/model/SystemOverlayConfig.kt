@@ -1,17 +1,17 @@
 package dev.aurakai.auraframefx.system.overlay.model
 
-import androidx.compose.ui.graphics.Color
+import kotlinx.serialization.Serializable
 
-/**
- * Configuration for system overlay
- */
+@Serializable
 data class SystemOverlayConfig(
-    val isEnabled: Boolean = true,
-    val backgroundColor: Color = Color.Transparent,
-    val opacity: Float = 1.0f,
-    val elements: List<OverlayElement> = emptyList(),
-    val animationDuration: Long = 300L,
-    val allowInteraction: Boolean = true,
-    val showOnLockscreen: Boolean = false,
-    val metadata: Map<String, Any> = emptyMap()
+    val notchBar: NotchBarConfigDetails = NotchBarConfigDetails()
+)
+
+@Serializable
+data class NotchBarConfigDetails(
+    val enabled: Boolean = true,
+    val showIndicators: Boolean = true,
+    val manageCutout: Boolean = true,
+    val showGenesisIndicator: Boolean = true,
+    val showStatus: Boolean = true
 )

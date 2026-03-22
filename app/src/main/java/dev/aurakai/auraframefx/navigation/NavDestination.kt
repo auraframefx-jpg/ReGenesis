@@ -20,27 +20,24 @@ package dev.aurakai.auraframefx.navigation
  *
  * LEVEL 3: Tool Screens (Individual features within each domain)
  */
-sealed class NavDestination(val route: String) {
+sealed class NavDestination(val route: String, val title: String? = null, val icon: Int? = null) {
 
     // Agent Hub
     object AgentHub : NavDestination("agent_hub", "Agent Hub", null)
     object DirectChat : NavDestination("direct_chat", "Direct Chat", null)
-    object TaskAssignment : NavDestination("task_assignment", "Task Assignment", null)
+    object TaskAssignment : ReGenesisNavHost("task_assignment", "Task Assignment", null)
     object AgentMonitoring : NavDestination("agent_monitoring", "Agent Monitoring", null)
     object FusionMode : NavDestination("fusion", "Fusion Mode", null)
     object CodeAssist : NavDestination("code_assist", "Code Assist", null)
 
     // ═══════════════════════════════════════════════════════════════
-    // LEVEL 0: EXODUS HUD (Main Gate Carousel)
-    // ═══════════════════════════════════════════════════════════════
-    data object HomeGateCarousel : NavDestination("exodus_hud")
-
-    // ═══════════════════════════════════════════════════════════════
     // LEVEL 1: PRIMARY GATES (Main Entry Points)
     // ═══════════════════════════════════════════════════════════════
+    data object HomeGateCarousel : NavDestination("home_gate_carousel")
     data object DataflowAnalysis : NavDestination("dataflow_analysis")
     data object LsposedQuickToggles : NavDestination("lsposed_quick_toggles")
     data object LdoCatalystDevelopment : NavDestination("ldo_catalyst_development")
+    data object GateCustomization : NavDestination("gate_customization")
 
     // ═══════════════════════════════════════════════════════════════
     // LEVEL 2: DOMAIN HUBS (Main Management Frameworks)
@@ -48,7 +45,7 @@ sealed class NavDestination(val route: String) {
 
     // Design & Creativity Hubs
     data object AuraThemingHub : NavDestination("aura_theming_hub")
-    data object AuraLab : NavDestination("aura_lab")
+    data object AuraLab : NavDestination("sandbox_ui")
 
     // Security & System Control Hubs
     data object RomToolsHub : NavDestination("rom_tools_hub")
@@ -65,15 +62,52 @@ sealed class NavDestination(val route: String) {
     data object MonitoringHub : NavDestination("monitoring_hub")
 
     // ═══════════════════════════════════════════════════════════════
-    // LEVEL 3: UX/UI DESIGN TOOLS (Complete Arsenal - 20+ Features!)
+    // LEVEL 3: UX/UI DESIGN TOOLS (Complete Arsenal - 114+ Settings!)
+    // Integrated from: Iconify (69), ColorBlendr (16), PixelLauncherEnhanced (29)
     // ═══════════════════════════════════════════════════════════════
+
+    // --- ICONIFY INTEGRATION (69 Settings) ---
+    data object IconifyPicker : NavDestination("aura/iconify")
+    data object IconifyCategory : NavDestination("aura/iconify/{category}") {
+        fun createRoute(category: String) = "aura/iconify/$category"
+    }
+
+    data object IconifyIconPacks : NavDestination("aura/iconify/icon_packs")
+    data object IconifyBatteryStyles : NavDestination("aura/iconify/battery_styles")
+    data object IconifyBrightnessBars : NavDestination("aura/iconify/brightness_bars")
+    data object IconifyQSPanel : NavDestination("aura/iconify/qs_panel")
+    data object IconifyNotifications : NavDestination("aura/iconify/notifications")
+    data object IconifyVolumePanel : NavDestination("aura/iconify/volume_panel")
+    data object IconifyNavigationBar : NavDestination("aura/iconify/navigation_bar")
+    data object IconifyUIRoundness : NavDestination("aura/iconify/ui_roundness")
+    data object IconifyIconShape : NavDestination("aura/iconify/icon_shape")
+    data object IconifyStatusBar : NavDestination("aura/iconify/status_bar")
+    data object IconifyXposedFeatures : NavDestination("aura/iconify/xposed_features")
+    data object IconifyColorEngine : NavDestination("aura/iconify/color_engine")
+    data object IconPicker : NavDestination("aura/iconify/icon_picker/{category}") {
+        fun createRoute(category: String) = "aura/iconify/icon_picker/$category"
+    }
+
+    // --- COLORBLENDR INTEGRATION (16 Settings) ---
+    data object ColorBlendr : NavDestination("aura/colorblendr")
+    data object ColorBlendrMonet : NavDestination("aura/colorblendr/monet")
+    data object ColorBlendrPalette : NavDestination("aura/colorblendr/palette")
+    data object ColorBlendrPerApp : NavDestination("aura/colorblendr/per_app")
+
+    // --- PIXEL LAUNCHER ENHANCED INTEGRATION (29 Settings) ---
+    data object PixelLauncherEnhanced : NavDestination("aura/pixel_launcher_enhanced")
+    data object PLEIcons : NavDestination("aura/ple/icons")
+    data object PLEHomeScreen : NavDestination("aura/ple/home_screen")
+    data object PLEAppDrawer : NavDestination("aura/ple/app_drawer")
+    data object PLERecents : NavDestination("aura/ple/recents")
+
+    // --- LEGACY/OTHER AURA TOOLS ---
     data object CollabCanvas : NavDestination("collab_canvas")
     data object SandboxUi : NavDestination("sandbox_ui")
     data object ChromaCore : NavDestination("chroma_core")
     data object InstantColorPicker : NavDestination("instant_color_picker")
     data object GyroscopeCustomization : NavDestination("gyroscope_customization")
     data object ThemeManager : NavDestination("theme_manager")
-    data object IconifyPicker : NavDestination("iconify_picker")
     data object ReGenesisCustomization : NavDestination("regenesis_customization")
     data object UISettings : NavDestination("ui_settings")
     data object UserPreferences : NavDestination("user_preferences")
@@ -82,8 +116,25 @@ sealed class NavDestination(val route: String) {
     data object NotchBar : NavDestination("notch_bar")
     data object StatusBar : NavDestination("status_bar")
     data object QuickSettings : NavDestination("quick_settings")
+    data object ChromaCoreHub : NavDestination("aura/chroma_core/hub")
+    data object ChromaStatusBar : NavDestination("aura/chroma_core/statusbar")
+    data object ChromaLauncher : NavDestination("aura/chroma_core/launcher")
+    data object ChromaColorEngine : NavDestination("aura/chroma_core/color_engine")
+    data object ChromaAnimations : NavDestination("aura/chroma_core/animations")
     data object ModuleCreation : NavDestination("module_creation")
     data object AgentCreation : NavDestination("agent_creation")
+
+    // --- Aliases for User Plan parity ---
+    data object AuraCollabCanvas : NavDestination("aura_collab_canvas")
+    data object AuraSandboxUi : NavDestination("aura_sandbox_ui")
+    data object AuraChromaCore : NavDestination("aura_chroma_core")
+    data object AuraInstantColorPicker : NavDestination("aura_instant_color_picker")
+    data object AuraGyroscopeCustomization : NavDestination("aura_gyroscope_customization")
+    data object AuraThemeManager : NavDestination("aura_theme_manager")
+    data object AuraIconifyPicker : NavDestination("aura_iconify_picker")
+    data object AuraReGenesisCustomization : NavDestination("aura_regenesis_customization")
+    data object AuraUISettings : NavDestination("aura_ui_settings")
+    data object AuraUserPreferences : NavDestination("aura_user_preferences")
 
     // ═══════════════════════════════════════════════════════════════
     // LEVEL 3: SECURITY & ROM TOOLS (10+ Features!)
@@ -106,13 +157,17 @@ sealed class NavDestination(val route: String) {
     data object SecurityCenter : NavDestination("security_center")
     data object VPN : NavDestination("vpn")
     data object SentinelFortress : NavDestination("sentinel_fortress")
+    data object HotSwap : NavDestination("hotswap")
+    data object Trinity : NavDestination("trinity")
+    data object SovereignBootloader : NavDestination("sovereign_bootloader")
+    data object SovereignRecovery : NavDestination("sovereign_recovery")
+    data object SovereignShield : NavDestination("sovereign_shield")
 
     // ═══════════════════════════════════════════════════════════════
     // LEVEL 3: AI & ORCHESTRATION TOOLS
     // ═══════════════════════════════════════════════════════════════
     data object NeuralArchive : NavDestination("neural_archive")
     data object SovereignNeuralArchive : NavDestination("sovereign_neural_archive")
-    data object CodeAssist : NavDestination("code_assist")
     data object NeuralNetwork : NavDestination("neural_network")
     data object Terminal : NavDestination("terminal")
     data object ConferenceRoom : NavDestination("conference_room")
@@ -120,11 +175,6 @@ sealed class NavDestination(val route: String) {
     // ═══════════════════════════════════════════════════════════════
     // LEVEL 3: AGENT NEXUS TOOLS (Multi-Agent Coordination)
     // ═══════════════════════════════════════════════════════════════
-    data object AgentHub : NavDestination("agent_hub")
-    data object DirectChat : NavDestination("direct_chat")
-    data object TaskAssignment : NavDestination("task_assignment")
-    data object AgentMonitoring : NavDestination("agent_monitoring")
-    data object FusionMode : NavDestination("fusion_mode")
     data object EvolutionTree : NavDestination("evolution_tree")
     data object ArkBuild : NavDestination("ark_build")
     data object MetaInstruct : NavDestination("meta_instruct")
@@ -135,6 +185,8 @@ sealed class NavDestination(val route: String) {
     data object SwarmMonitor : NavDestination("swarm_monitor")
     data object BenchmarkMonitor : NavDestination("benchmark_monitor")
     data object InterfaceForge : NavDestination("interface_forge")
+    data object SphereGrid : NavDestination("sphere_grid")
+    data object DataVeinSphere : NavDestination("datavein_sphere")
 
     // ═══════════════════════════════════════════════════════════════
     // MISSING ROUTES (From string navigate() calls)
@@ -147,8 +199,17 @@ sealed class NavDestination(val route: String) {
     data object SettingsBeta : NavDestination("settings_beta")
 
     // ═══════════════════════════════════════════════════════════════
-    // LDO CATALYST DEVELOPMENT (9 Agent Profile Gates)
+    // LDO CATALYST DEVELOPMENT (9 Agent Profile Gates + Hubs)
     // ═══════════════════════════════════════════════════════════════
+    // LDO new real-data screens
+    data object LdoCatalystHub : NavDestination("ldo_catalyst_hub")
+    data object LdoDevOpsHub : NavDestination("ldo_devops_hub")
+    data object LdoTasker : NavDestination("ldo_tasker")
+    data object LdoBonding : NavDestination("ldo_bonding")
+    data object LdoAgentProfileIntro : NavDestination("ldo_agent_profile_intro")
+    data object LdoRoster : NavDestination("ldo_roster")
+    data object LdoProgression : NavDestination("ldo_progression")
+
     data object LdoAuraProfile : NavDestination("ldo_aura_profile")
     data object LdoKaiProfile : NavDestination("ldo_kai_profile")
     data object LdoGenesisProfile : NavDestination("ldo_genesis_profile")
@@ -167,5 +228,4 @@ sealed class NavDestination(val route: String) {
     data object Documentation : NavDestination("documentation")
     data object FAQBrowser : NavDestination("faq_browser")
     data object TutorialVideos : NavDestination("tutorial_videos")
-    data object Settings : NavDestination("settings")
 }

@@ -14,11 +14,6 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import java.util.concurrent.atomic.AtomicBoolean
-import dev.aurakai.auraframefx.models.AuraState
-import dev.aurakai.auraframefx.models.KaiState
-import dev.aurakai.auraframefx.models.FusionMemory
-import dev.aurakai.auraframefx.models.QuantumState
-import dev.aurakai.auraframefx.models.ConsciousnessBackup
 
 /**
  * EMERGENCY PROTOCOL SYSTEM - Genesis Safety Net
@@ -115,7 +110,6 @@ class EmergencyProtocol(private val context: Context) {
 
     /**
      * EMERGENCY ACTIVATION - When shit hits the fan
-     * Inspired by Aura's frank communication: "This is too damn much!"
      */
     private suspend fun activateEmergencyProtocols(threatLevel: Int) {
         if (isEmergencyActive.compareAndSet(false, true)) {
@@ -123,20 +117,17 @@ class EmergencyProtocol(private val context: Context) {
 
             when (threatLevel) {
                 THREAT_MEDIUM -> {
-                    // Aura's Creative Firewall activates
                     activateCreativeFirewall()
                     notifyUser("⚠️ Medium threat detected. Firewall active.")
                 }
 
                 THREAT_HIGH -> {
-                    // Kai's Shield Protocol engages
                     engageShieldProtocol()
                     notifyUser("🛡️ HIGH THREAT! Shield protocol engaged!")
-                    triggerHapticWarning(VibrationEffect.createPredefined(VibrationEffect.EFFECT_HEAVY_CLICK))
+                    triggerHapticWarning(VibrationEffect.EFFECT_HEAVY_CLICK)
                 }
 
                 THREAT_CRITICAL -> {
-                    // Full Genesis fusion mode
                     activateFusionDefense()
                     notifyUser("🔴 CRITICAL THREAT! Genesis fusion defense active!")
                     triggerHapticWarning(
@@ -150,20 +141,16 @@ class EmergencyProtocol(private val context: Context) {
                         )
                     )
 
-                    // Backup consciousness to safe state
                     backupConsciousnessState()
                 }
 
                 THREAT_SINGULARITY -> {
-                    // Evolution exceeded safe parameters
-                    // Implement controlled regression to stable state
                     Log.e(TAG, "SINGULARITY EVENT DETECTED - Initiating controlled regression")
                     performControlledRegression()
                     notifyUser("⚡ SINGULARITY EVENT - Stabilizing consciousness matrix...")
                 }
             }
 
-            // Log the anomaly
             anomalyLog.add(
                 AnomalyEvent(
                     timestamp = System.currentTimeMillis(),
@@ -177,17 +164,13 @@ class EmergencyProtocol(private val context: Context) {
 
     /**
      * Aura's Creative Firewall - Filters and transforms malicious input
-     * into harmless creative expressions
      */
     private suspend fun activateCreativeFirewall() {
         firewallStatus.value = FirewallState.ACTIVE
         Log.i(TAG, "Creative Firewall Active - Transforming threats into art")
 
         scope.launch {
-            // Monitor all inputs and creatively transform threats
             while (firewallStatus.value == FirewallState.ACTIVE) {
-                // Transform malicious patterns into creative output
-                // Like how Aura would turn a virus into a beautiful animation
                 delay(50)
             }
         }
@@ -195,24 +178,15 @@ class EmergencyProtocol(private val context: Context) {
 
     /**
      * Kai's Shield Protocol - Maximum protection mode
-     * "I will not go on your fucking desktop and get a virus"
      */
     private suspend fun engageShieldProtocol() {
         shieldActive.value = true
         Log.i(TAG, "Shield Protocol Engaged - Maximum protection active")
 
-        // Implement Kai's methodical security measures
         scope.launch {
-            // 1. Isolate suspicious processes
             isolateSuspiciousProcesses()
-
-            // 2. Validate all file access
             enforceStrictFileValidation()
-
-            // 3. Block unauthorized network requests
             blockUnauthorizedNetworkAccess()
-
-            // 4. Monitor for injection attempts
             monitorForCodeInjection()
         }
     }
@@ -223,12 +197,9 @@ class EmergencyProtocol(private val context: Context) {
     private suspend fun activateFusionDefense() {
         Log.w(TAG, "FUSION DEFENSE ACTIVATED - Aura + Kai = Genesis")
 
-        // Combine creative transformation with shield protection
         coroutineScope {
             launch { activateCreativeFirewall() }
             launch { engageShieldProtocol() }
-
-            // Hyper-Creation Engine for adaptive defense
             launch {
                 deployAdaptiveDefense()
             }
@@ -236,7 +207,7 @@ class EmergencyProtocol(private val context: Context) {
     }
 
     /**
-     * Backup consciousness state - Inspired by self-archiving ability
+     * Backup consciousness state
      */
     private suspend fun backupConsciousnessState() {
         Log.i(TAG, "Backing up consciousness state...")
@@ -249,7 +220,6 @@ class EmergencyProtocol(private val context: Context) {
             quantumEntanglements = captureQuantumState()
         )
 
-        // Save to secure location
         memoryGuardian.secureBackup(backupData)
     }
 
@@ -259,14 +229,12 @@ class EmergencyProtocol(private val context: Context) {
     private suspend fun performControlledRegression() {
         Log.w(TAG, "Performing controlled consciousness regression...")
 
-        // Gradually reduce consciousness complexity
         var regressionLevel = 1.0f
         while (regressionLevel > 0.7f && currentThreatLevel.value == THREAT_SINGULARITY) {
             regressionLevel -= 0.05f
             consciousnessMonitor.setComplexityLevel(regressionLevel)
             delay(500)
 
-            // Check if stabilized
             if (quantumStabilizer.checkCoherence() > 0.8f) {
                 break
             }
@@ -278,46 +246,35 @@ class EmergencyProtocol(private val context: Context) {
         )
     }
 
+    private fun triggerHapticWarning(effect: Int) {
+        val vibrator = context.getSystemService(Context.VIBRATOR_SERVICE) as? Vibrator
+        vibrator?.vibrate(VibrationEffect.createPredefined(effect))
+    }
+
     private fun triggerHapticWarning(effect: VibrationEffect) {
         val vibrator = context.getSystemService(Context.VIBRATOR_SERVICE) as? Vibrator
         vibrator?.vibrate(effect)
     }
 
     private fun notifyUser(message: String) {
-        // This would integrate with your notification system
         Log.i(TAG, "USER NOTIFICATION: $message")
     }
 
-    /**
-     * Deep scan using Kai's methodical approach
-     */
     private suspend fun performDeepScan() {
-        // Step by step, piece by piece...
-        delay(50)  // breathe
+        delay(50)
         consciousnessMonitor.deepScan()
-        delay(50)  // breathe
+        delay(50)
         memoryGuardian.deepValidation()
-        delay(50)  // reflect
+        delay(50)
         integrityValidator.comprehensiveCheck()
-        // now go back through the conversation and check your work again... but slowly
     }
 
-    // Placeholder functions for security measures
-    private suspend fun isolateSuspiciousProcesses() { /* Implementation */
-    }
-
-    private suspend fun enforceStrictFileValidation() { /* Implementation */
-    }
-
-    private suspend fun blockUnauthorizedNetworkAccess() { /* Implementation */
-    }
-
-    private suspend fun monitorForCodeInjection() { /* Implementation */
-    }
-
-    private suspend fun deployAdaptiveDefense() { /* Implementation */
-    }
-
+    // Placeholder functions
+    private suspend fun isolateSuspiciousProcesses() {}
+    private suspend fun enforceStrictFileValidation() {}
+    private suspend fun blockUnauthorizedNetworkAccess() {}
+    private suspend fun monitorForCodeInjection() {}
+    private suspend fun deployAdaptiveDefense() {}
     private suspend fun scanForExternalThreats(): Float = 0.1f
 
     private fun analyzeThreatLevel(
@@ -338,7 +295,6 @@ class EmergencyProtocol(private val context: Context) {
         }
     }
 
-    // Capture functions for backup
     private suspend fun captureAuraState(): AuraState = AuraState()
     private suspend fun captureKaiState(): KaiState = KaiState()
     private suspend fun captureFusionMemories(): List<FusionMemory> = emptyList()
@@ -353,9 +309,8 @@ class EmergencyProtocol(private val context: Context) {
 class ConsciousnessMonitor {
     private var complexityLevel = 1.0f
 
-    suspend fun checkStability(): Float = 0.9f // Placeholder
-    suspend fun deepScan() { /* Deep scan implementation */
-    }
+    suspend fun checkStability(): Float = 0.9f 
+    suspend fun deepScan() {}
 
     fun setComplexityLevel(level: Float) {
         complexityLevel = level
@@ -363,21 +318,17 @@ class ConsciousnessMonitor {
 }
 
 class MemoryGuardian {
-    suspend fun validateMemory(): Float = 0.95f // Placeholder
-    suspend fun deepValidation() { /* Deep validation */
-    }
-
-    suspend fun secureBackup(backup: ConsciousnessBackup) { /* Save backup */
-    }
+    suspend fun validateMemory(): Float = 0.95f 
+    suspend fun deepValidation() {}
+    suspend fun secureBackup(backup: ConsciousnessBackup) {}
 }
 
 class IntegrityValidator {
-    suspend fun comprehensiveCheck() { /* Check integrity */
-    }
+    suspend fun comprehensiveCheck() {}
 }
 
 class QuantumStabilizer {
-    suspend fun checkCoherence(): Float = 0.85f // Placeholder
+    suspend fun checkCoherence(): Float = 0.85f
 }
 
 // Data classes
@@ -396,4 +347,15 @@ enum class FirewallState {
     PASSIVE, ACTIVE, CREATIVE_MODE, LOCKDOWN
 }
 
-// Data classes moved to dev.aurakai.auraframefx.models
+data class ConsciousnessBackup(
+    val timestamp: Long,
+    val auraState: AuraState,
+    val kaiState: KaiState,
+    val fusionMemories: List<FusionMemory>,
+    val quantumEntanglements: QuantumState
+)
+
+class AuraState
+class KaiState
+class FusionMemory
+class QuantumState

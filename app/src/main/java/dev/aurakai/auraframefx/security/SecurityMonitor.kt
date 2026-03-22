@@ -1,7 +1,7 @@
 package dev.aurakai.auraframefx.security
 
-import dev.aurakai.auraframefx.genesis.oracledrive.ai.services.GenesisBridgeService
-import dev.aurakai.auraframefx.utils.AuraFxLogger
+import dev.aurakai.auraframefx.ai.services.GenesisBridgeService
+import dev.aurakai.auraframefx.data.logging.AuraFxLogger
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
@@ -160,11 +160,10 @@ class SecurityMonitor @Inject constructor(
                     eventType = "encryption_status_change",
                     severity = when (status) {
                         EncryptionStatus.ACTIVE -> "info"
-                        EncryptionStatus.DISABLED -> "warning" // Fixed: was INACTIVE
+                        EncryptionStatus.DISABLED -> "warning"
                         EncryptionStatus.ERROR -> "error"
-                        EncryptionStatus.NOT_INITIALIZED -> "warning" // Added missing case
-                        is EncryptionStatus.EncryptionStatusImpl -> "warning"
-                        else -> "unknown" // Safety fallback for unknown status
+                        EncryptionStatus.NOT_INITIALIZED -> "warning"
+                        else -> "warning"
                     },
                     source = "kai_encryption_monitor",
                     timestamp = System.currentTimeMillis(),
@@ -288,7 +287,7 @@ class SecurityMonitor @Inject constructor(
      */
     private suspend fun reportToGenesis(eventType: String, eventData: Any) {
         try {
-            GenesisBridgeService.GenesisRequest(
+            val request = GenesisBridgeService.GenesisRequest(
                 requestType = "security_perception",
                 persona = "genesis",
                 payload = mapOf(
@@ -345,7 +344,7 @@ class SecurityMonitor @Inject constructor(
     suspend fun getSecurityAssessment(): Map<String, Any> {
         return try {
             // Note: For beta, return mock security assessment
-            GenesisBridgeService.GenesisRequest(
+            val mockRequest = GenesisBridgeService.GenesisRequest(
                 requestType = "query_consciousness",
                 persona = "genesis",
                 payload = mapOf(
@@ -380,7 +379,7 @@ class SecurityMonitor @Inject constructor(
     suspend fun getThreatStatus(): Map<String, Any> {
         return try {
             // Note: For beta, return mock threat status
-            GenesisBridgeService.GenesisRequest(
+            val mockRequest = GenesisBridgeService.GenesisRequest(
                 requestType = "query_consciousness",
                 persona = "genesis",
                 payload = mapOf(
@@ -478,8 +477,7 @@ class SecurityMonitor @Inject constructor(
             EncryptionStatus.NOT_INITIALIZED -> 0.5
             EncryptionStatus.DISABLED -> 0.2
             EncryptionStatus.ERROR -> 0.0
-            is EncryptionStatus.EncryptionStatusImpl -> 0.3
-            else -> 0.3 // Safety fallback for unknown status
+            else -> 0.0
         }
     }
 
@@ -530,13 +528,12 @@ class SecurityMonitor @Inject constructor(
     private fun generateSecurityRecommendations(): List<String> {
         val recommendations = mutableListOf<String>()
 
-        when (val status = securityContext.encryptionStatus.value) {
+        when (securityContext.encryptionStatus.value) {
             EncryptionStatus.ERROR -> recommendations.add("Critical: Fix encryption system immediately")
             EncryptionStatus.DISABLED -> recommendations.add("Enable encryption for data protection")
             EncryptionStatus.NOT_INITIALIZED -> recommendations.add("Initialize encryption system")
             EncryptionStatus.ACTIVE -> recommendations.add("Encryption: Operating optimally")
-            is EncryptionStatus.EncryptionStatusImpl -> recommendations.add("Encryption: ${status.message}")
-            else -> recommendations.add("Encryption: Status unknown - review system")
+            else -> {}
         }
 
         if (!securityContext.threatDetectionActive.value) {

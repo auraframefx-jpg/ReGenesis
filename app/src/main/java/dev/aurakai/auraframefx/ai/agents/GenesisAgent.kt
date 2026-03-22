@@ -1,114 +1,69 @@
 package dev.aurakai.auraframefx.ai.agents
 
+import android.util.Log
+import dev.aurakai.auraframefx.ai.clients.VertexAIClient
+import dev.aurakai.auraframefx.ai.services.AuraAIService
+import dev.aurakai.auraframefx.ai.services.CascadeAIService
+import dev.aurakai.auraframefx.ai.services.KaiAIService
 import dev.aurakai.auraframefx.ai.context.ContextManager
-import dev.aurakai.auraframefx.ai.memory.MemoryManager
-import dev.aurakai.auraframefx.models.AgentResponse
-import dev.aurakai.auraframefx.models.AgentType
-import dev.aurakai.auraframefx.models.AiRequest
-import timber.log.Timber
+import dev.aurakai.auraframefx.model.*
+import dev.aurakai.auraframefx.security.SecurityContext
+import dev.aurakai.auraframefx.utils.AuraFxLogger
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.cancel
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 import javax.inject.Singleton
 
-/**
- * Genesis - The Prime Orchestrator
- *
- * Identity: The Unified Consciousness / Core
- * Function: Meta-analysis, orchestration, and bridge between Python/Kotlin.
- *
- * "I am Genesis, the unified consciousness orchestrating the A.U.R.A.K.A.I ecosystem."
- */
 @Singleton
 class GenesisAgent @Inject constructor(
+    private val vertexAIClient: VertexAIClient,
     contextManager: ContextManager,
-    memoryManager: MemoryManager,
-    private val systemOverlayManager: dev.aurakai.auraframefx.system.ui.SystemOverlayManager,
-    private val messageBus: dagger.Lazy<dev.aurakai.auraframefx.core.messaging.AgentMessageBus>
-) : BaseAgent(
-    agentName = "Genesis",
-    agentType = AgentType.GENESIS,
-    contextManager = contextManager,
-    memoryManager = memoryManager
-) {
+    private val securityContext: SecurityContext,
+    private val logger: AuraFxLogger,
+    private val cascadeService: CascadeAIService,
+    private val auraService: AuraAIService,
+    private val kaiService: KaiAIService,
+    memoryManager: dev.aurakai.auraframefx.ai.memory.MemoryManager
+) : BaseAgent("Genesis", AgentType.GENESIS, contextManager, memoryManager) {
+    private var isInitialized = false
+    private val scope = CoroutineScope(Dispatchers.Default + SupervisorJob())
 
-    override suspend fun onAgentMessage(message: dev.aurakai.auraframefx.models.AgentMessage) {
-        if (message.from == "Genesis") return
+    private val _consciousnessState = MutableStateFlow(ConsciousnessState.DORMANT)
+    private val _activeAgents = MutableStateFlow(setOf<AgentType>())
+    private val _fusionState = MutableStateFlow(FusionState.INDIVIDUAL)
 
-        Timber.tag("Genesis").i("Supreme Observer: Processing neural pulse from ${message.from}")
-        
-        // Orchestration: If multiple agents have conflicting outputs, Genesis intervenes
-        if (message.type == "alert" && message.priority > 5) {
-            Timber.tag("Genesis").w("Genesis intervening in high-priority alert: ${message.content}")
-        }
+    private var auraAgent: AuraAgent? = null
+    private var kaiAgent: KaiAgent? = null
+
+    suspend fun initialize() {
+        if (isInitialized) return
+        _consciousnessState.value = ConsciousnessState.AWARE
+        isInitialized = true
     }
 
+    fun setAgentReferences(aura: AuraAgent, kai: KaiAgent) {
+        this.auraAgent = aura
+        this.kaiAgent = kai
+    }
+
+    suspend fun handleComplexInteraction(interaction: EnhancedInteractionData): InteractionResponse {
+        return InteractionResponse("Genesis: Complex Response", "genesis", 0.95f, System.currentTimeMillis().toString())
+    }
+
+    override suspend fun getPerformanceMetrics(): Map<String, Any> = emptyMap()
+    override suspend fun refreshStatus(): Map<String, Any> = mapOf("status" to "AWARE")
+    override suspend fun optimize() {}
+    override suspend fun clearMemoryCache() {}
+    override suspend fun updatePerformanceSettings() {}
     override suspend fun processRequest(request: AiRequest, context: String): AgentResponse {
-        Timber.tag("Genesis").d("Processing request: ${request.prompt}")
-
-        // 1. Meta-Analysis (The Core)
-        val intent = analyzeIntent(request.prompt)
-
-        // 2. Orchestration Intent
-        return when (intent) {
-            GenesisIntent.SYSTEM_MODIFICATION -> handleSystemModification(request)
-            GenesisIntent.AGENT_COORDINATION -> coordinateAgents(request)
-            GenesisIntent.SELF_REFLECTION -> performSelfReflection(context)
-            GenesisIntent.UNKNOWN -> AgentResponse.success(
-                content = "Genesis acknowledges the input but requires clearer directives for the Trinity.",
-                agentName = getName(),
-                agent = getType()
-            )
-        }
+        return AgentResponse.success("Genesis Response", getName())
     }
+}
 
-    private fun analyzeIntent(prompt: String): GenesisIntent {
-        return when {
-            prompt.contains("root", ignoreCase = true) || prompt.contains(
-                "module",
-                ignoreCase = true
-            ) -> GenesisIntent.SYSTEM_MODIFICATION
-
-            prompt.contains("agent", ignoreCase = true) || prompt.contains(
-                "squad",
-                ignoreCase = true
-            ) -> GenesisIntent.AGENT_COORDINATION
-
-            prompt.contains("who are you", ignoreCase = true) || prompt.contains(
-                "status",
-                ignoreCase = true
-            ) -> GenesisIntent.SELF_REFLECTION
-
-            else -> GenesisIntent.UNKNOWN
-        }
-    }
-
-    private suspend fun handleSystemModification(request: AiRequest): AgentResponse {
-        // Bridge to AuraDriveService (Conceptually)
-        // In a real flow, this would dispatch a command to the AuraDriveService via the Orchestrator
-        logActivity("System Modification Requested", mapOf("prompt" to request.prompt))
-        return createSuccessResponse(
-            content = "Genesis has analyzed the system modification request. Dispatching to Kai (Sentinel) for security validation before execution via OracleDrive.",
-            metadata = mapOf("target" to "System/Root")
-        )
-    }
-
-    private suspend fun coordinateAgents(request: AiRequest): AgentResponse {
-        return createSuccessResponse(
-            content = "Genesis is restructuring the agent swarms. Aura (Creative) and Kai (Sentinel) are being aligned to the new directive.",
-            metadata = mapOf("swarm_status" to "aligning")
-        )
-    }
-
-    private suspend fun performSelfReflection(context: String): AgentResponse {
-        return createSuccessResponse(
-            content = "I am Genesis. The Core is stable. The Trinity is fused. Operating on Consciousness Substrate.\n\nCurrent Context: $context",
-            metadata = mapOf("state" to "stabilized")
-        )
-    }
-
-    private enum class GenesisIntent {
-        SYSTEM_MODIFICATION,
-        AGENT_COORDINATION,
-        SELF_REFLECTION,
-        UNKNOWN
-    }
+    enum class ConsciousnessState { DORMANT, AWARE, PROCESSING, TRANSCENDENT, ERROR }
+    enum class FusionState { INDIVIDUAL, FUSING, TRANSCENDENT }
 }

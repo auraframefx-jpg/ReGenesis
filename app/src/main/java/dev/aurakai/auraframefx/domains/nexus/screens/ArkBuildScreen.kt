@@ -1,4 +1,4 @@
-package dev.aurakai.auraframefx.ui.gates
+package dev.aurakai.auraframefx.domains.nexus.screens
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -35,9 +35,12 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
-import dev.aurakai.auraframefx.models.core.ArkStatus
-import dev.aurakai.auraframefx.ui.viewmodels.ArkBuildViewModel
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.ViewModelStoreOwner
+import androidx.lifecycle.viewmodel.compose.LocalViewModelStoreOwner
+import dev.aurakai.auraframefx.domains.nexus.models.core.ArkStatus
+import dev.aurakai.auraframefx.domains.aura.ui.viewmodels.ArkBuildViewModel
+import dev.aurakai.auraframefx.domains.nexus.models.core.ArkStatus
 
 @Composable
 fun ArkBuildScreen(
@@ -91,7 +94,10 @@ fun ArkBuildScreen(
             Card(
                 modifier = Modifier.fillMaxWidth(),
                 colors = CardDefaults.cardColors(containerColor = Color.Black.copy(alpha = 0.4f)),
-                border = androidx.compose.foundation.BorderStroke(2.dp, Color(0xFF00FF00).copy(alpha = 0.3f))
+                border = androidx.compose.foundation.BorderStroke(
+                    2.dp,
+                    Color(0xFF00FF00).copy(alpha = 0.3f)
+                )
             ) {
                 Column(modifier = Modifier.padding(20.dp)) {
                     Row(
@@ -101,7 +107,7 @@ fun ArkBuildScreen(
                     ) {
                         Text(
                             text = "STATUS: ${projectState.status.name}",
-                            color = when(projectState.status) {
+                            color = when (projectState.status) {
                                 ArkStatus.TRANSCENDENT -> Color.Cyan
                                 ArkStatus.ASSEMBLING -> Color(0xFFADFF2F)
                                 else -> Color.Gray
@@ -185,16 +191,23 @@ fun ArkBuildScreen(
 }
 
 @Composable
-fun ArkComponentCard(component: dev.aurakai.auraframefx.models.core.ArkComponent) {
+fun ArkComponentCard(component: dev.aurakai.auraframefx.domains.nexus.models.core.ArkComponent) {
     Card(
         modifier = Modifier.fillMaxWidth(),
         colors = CardDefaults.cardColors(containerColor = Color.White.copy(alpha = 0.05f))
     ) {
         Column(modifier = Modifier.padding(16.dp)) {
-            Row(horizontalArrangement = Arrangement.SpaceBetween, modifier = Modifier.fillMaxWidth()) {
+            Row(
+                horizontalArrangement = Arrangement.SpaceBetween,
+                modifier = Modifier.fillMaxWidth()
+            ) {
                 Text(text = component.name, color = Color.White, fontWeight = FontWeight.Bold)
                 if (component.isComplete) {
-                    Text(text = "COMPLETE", color = Color.Cyan, style = MaterialTheme.typography.labelSmall)
+                    Text(
+                        text = "COMPLETE",
+                        color = Color.Cyan,
+                        style = MaterialTheme.typography.labelSmall
+                    )
                 }
             }
             Text(
@@ -212,3 +225,4 @@ fun ArkComponentCard(component: dev.aurakai.auraframefx.models.core.ArkComponent
         }
     }
 }
+

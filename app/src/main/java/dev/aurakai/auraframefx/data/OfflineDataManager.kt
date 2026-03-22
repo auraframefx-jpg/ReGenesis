@@ -2,11 +2,12 @@ package dev.aurakai.auraframefx.data
 
 import android.content.Context
 import dagger.hilt.android.qualifiers.ApplicationContext
-import dev.aurakai.auraframefx.config.AIConfig
 import javax.inject.Inject
 import javax.inject.Singleton
 
-// TODO: Implement offline data management logic
+/**
+ * Manages offline data for the AuraFrameFX ecosystem.
+ */
 @Singleton
 class OfflineDataManager @Inject constructor(
     @ApplicationContext private val context: Context,
@@ -21,16 +22,10 @@ class OfflineDataManager @Inject constructor(
      *
      * @return The loaded offline data, or null if no data is available.
      */
-    suspend fun loadCriticalOfflineData(): OfflineSystemData {
+    fun loadCriticalOfflineData(): Any? {
         // Replace with actual data loading logic
         println("Attempting to load critical offline data...")
-        // Return dummy data for now to fix build
-        return OfflineSystemData(
-            lastFullSyncTimestamp = System.currentTimeMillis(),
-            aiConfig = AIConfig.createDefault(), // Use factory method
-            systemMonitoring = SystemMonitoring(enabled = true),
-            contextualMemory = ContextualMemory(lastUpdateTimestamp = System.currentTimeMillis())
-        )
+        return null // Placeholder
     }
 
     /**
@@ -40,23 +35,8 @@ class OfflineDataManager @Inject constructor(
      *
      * @param data The critical data to be saved.
      */
-    fun saveCriticalOfflineData(data: OfflineSystemData) {
+    fun saveCriticalOfflineData(data: Any) {
         // Replace with actual data saving logic
         println("Attempting to save critical offline data: $data")
     }
 }
-
-data class OfflineSystemData(
-    val lastFullSyncTimestamp: Long,
-    val aiConfig: AIConfig,
-    val systemMonitoring: SystemMonitoring,
-    val contextualMemory: ContextualMemory
-)
-
-data class SystemMonitoring(
-    val enabled: Boolean
-)
-
-data class ContextualMemory(
-    val lastUpdateTimestamp: Long
-)

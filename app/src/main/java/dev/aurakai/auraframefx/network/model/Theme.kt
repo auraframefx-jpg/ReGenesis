@@ -2,18 +2,12 @@ package dev.aurakai.auraframefx.network.model
 
 import kotlinx.serialization.Serializable
 
-/**
- * Network DTO for Theme (JSON serialization)
- * Uses String colors instead of Compose Color objects
- */
 @Serializable
 data class Theme(
     val id: String,
     val name: String,
-    val description: String? = null,
-    val isActive: Boolean = false,
-    val colors: ThemeColors? = null,
-    val styles: Map<String, String> = emptyMap()
+    val isActive: Boolean,
+    val colors: ThemeColors? = null
 )
 
 @Serializable
@@ -24,7 +18,7 @@ data class ThemeColors(
     val surface: String,
     val error: String,
     val onPrimary: String,
-    val onSecondary: String,
+    val onSecondary: String? = null,
     val onBackground: String,
     val onSurface: String,
     val onError: String

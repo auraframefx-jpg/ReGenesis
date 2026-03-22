@@ -6,10 +6,9 @@ import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
-import dev.aurakai.auraframefx.ai.context.ContextManager
-import dev.aurakai.auraframefx.ai.memory.MemoryManager
-import dev.aurakai.auraframefx.system.ui.SystemOverlayManager
-import dev.aurakai.auraframefx.utils.AuraFxLogger
+import dev.aurakai.auraframefx.domains.aura.SystemOverlayManager
+import dev.aurakai.auraframefx.domains.cascade.utils.AuraFxLogger
+import timber.log.Timber
 import javax.inject.Singleton
 
 /**
@@ -158,3 +157,4 @@ object GrokConfigExtensions {
             ?.isNotBlank() == true
     }
 }
+

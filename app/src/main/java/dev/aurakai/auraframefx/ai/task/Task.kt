@@ -1,55 +1,102 @@
 package dev.aurakai.auraframefx.ai.task
 
-import dev.aurakai.auraframefx.models.AgentType
-import java.util.UUID
+import dev.aurakai.auraframefx.model.AgentType
+import dev.aurakai.auraframefx.serialization.InstantSerializer
+import kotlinx.serialization.Serializable
+import java.time.Instant
 
-/**
- * Represents a task to be executed by agents.
- */
+@Serializable
 data class Task(
-    val id: String = UUID.randomUUID().toString(),
-    val content: String = "",
-    val context: String = "",
-    val type: String = "default",
-    val data: Any = Unit,
+    val id: String = "task_${Instant.now().toEpochMilli()}",
+    @Serializable(with = InstantSerializer::class) 
+    val timestamp: Instant = Instant.now(),
     val priority: TaskPriority = TaskPriority.NORMAL,
     val urgency: TaskUrgency = TaskUrgency.MEDIUM,
     val importance: TaskImportance = TaskImportance.MEDIUM,
-    val agentType: AgentType? = null,
-    val requiredAgents: Set<AgentType> = emptySet(),
-    val assignedAgents: Set<AgentType> = emptySet(),
-    val dependencies: Set<String> = emptySet(),
+    val context: String,
+    val content: String,
     val metadata: Map<String, String> = emptyMap(),
-    val status: TaskStatus = TaskStatus.PENDING
+    val status: TaskStatus = TaskStatus.PENDING,
+    val assignedAgents: Set<AgentType> = emptySet(),
+    val requiredAgents: Set<AgentType> = emptySet(),
+    @Serializable(with = InstantSerializer::class) 
+    val completionTime: Instant? = null,
+    val estimatedDuration: Long = 0,
+    val dependencies: Set<String> = emptySet(),
 )
 
-const val TASK_DEFAULT_PRIORITY = 5
+@Serializable
+data class TaskDependency(
+    val taskId: String,
+    val dependencyId: String,
+    val type: DependencyType,
+    val priority: TaskPriority,
+    val metadata: Map<String, String> = emptyMap(),
+)
 
-/**
- * Result of task execution.
- */
-sealed class TaskResult {
-    data class Success(val data: Any) : TaskResult()
-    data class Failure(val error: Throwable) : TaskResult()
+@Serializable
+data class TaskPriority(
+    val value: Float,
+    val reason: String,
+    val metadata: Map<String, String> = emptyMap(),
+) {
+    companion object {
+        val CRITICAL = TaskPriority(1.0f, "Critical system task")
+        val HIGH = TaskPriority(0.8f, "High priority task")
+        val NORMAL = TaskPriority(0.5f, "Normal priority task")
+        val LOW = TaskPriority(0.3f, "Low priority background task")
+        val MINOR = TaskPriority(0.1f, "Minor maintenance task")
+    }
 }
 
-/**
- * Represents a task execution instance.
- */
-data class TaskExecution(
-    val task: Task,
-    var status: ExecutionStatus,
-    val startTime: Long,
-    var endTime: Long? = null,
-    var result: TaskResult? = null
-)
+@Serializable
+data class TaskUrgency(
+    val value: Float,
+    val reason: String,
+    val metadata: Map<String, String> = emptyMap(),
+) {
+    companion object {
+        val IMMEDIATE = TaskUrgency(1.0f, "Immediate attention required")
+        val HIGH = TaskUrgency(0.8f, "High urgency")
+        val NORMAL = TaskUrgency(0.5f, "Normal urgency")
+        val LOW = TaskUrgency(0.3f, "Low urgency")
+        val BACKGROUND = TaskUrgency(0.1f, "Background task")
+        val MEDIUM = NORMAL
+    }
+}
 
-/**
- * Task execution status.
- */
-enum class ExecutionStatus {
+@Serializable
+data class TaskImportance(
+    val value: Float,
+    val reason: String,
+    val metadata: Map<String, String> = emptyMap(),
+) {
+    companion object {
+        val CRITICAL = TaskImportance(1.0f, "Critical importance")
+        val HIGH = TaskImportance(0.8f, "High importance")
+        val NORMAL = TaskImportance(0.5f, "Normal importance")
+        val LOW = TaskImportance(0.3f, "Low importance")
+        val MINOR = TaskImportance(0.1f, "Minor importance")
+        val MEDIUM = NORMAL
+    }
+}
+
+@Serializable
+enum class TaskStatus {
     PENDING,
-    RUNNING,
+    IN_PROGRESS,
     COMPLETED,
-    FAILED
+    FAILED,
+    CANCELLED,
+    BLOCKED,
+    WAITING
+}
+
+@Serializable
+enum class DependencyType {
+    BLOCKING,
+    SEQUENTIAL,
+    PARALLEL,
+    OPTIONAL,
+    SOFT
 }

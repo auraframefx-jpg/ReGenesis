@@ -18,6 +18,10 @@ import java.net.Socket
 import javax.inject.Inject
 import javax.inject.Singleton
 
+/**
+ * Monitors the connectivity state and reachability of the cloud backend.
+ * Uses low-level socket checks for accurate reachability determination.
+ */
 @Singleton
 class CloudStatusMonitor @Inject constructor(
     @ApplicationContext private val context: Context,
@@ -28,9 +32,11 @@ class CloudStatusMonitor @Inject constructor(
 
     init {
         Log.d(TAG, "CloudStatusMonitor initialized.")
-        // Consider an initial check or rely on explicit startMonitoring call
     }
 
+    /**
+     * Checks if the device has a validated internet connection via ConnectivityManager.
+     */
     fun isNetworkConnected(): Boolean {
         val connectivityManager =
             context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
@@ -41,9 +47,12 @@ class CloudStatusMonitor @Inject constructor(
                 networkCapabilities.hasCapability(NetworkCapabilities.NET_CAPABILITY_VALIDATED)
     }
 
+    /**
+     * Performs a low-level reachability check by attempting to connect to a known DNS server.
+     */
     suspend fun checkActualInternetReachability(): Boolean = withContext(Dispatchers.IO) {
         if (!isNetworkConnected()) {
-            _isCloudReachable.update { false } // Use update for StateFlow
+            _isCloudReachable.update { false }
             Log.d(TAG, "No network connection. Cloud is determined unreachable.")
             return@withContext false
         }
@@ -59,22 +68,23 @@ class CloudStatusMonitor @Inject constructor(
             }
         } catch (e: IOException) {
             _isCloudReachable.update { false }
-            // Log only the message for IOException as stack trace can be verbose for network timeouts
             Log.w(
                 TAG,
                 "Actual internet host is unreachable. Cloud determined unreachable: ${e.message}"
             )
             return@withContext false
-        } catch (e: Exception) { // Catch any other unexpected errors
+        } catch (e: Exception) {
             _isCloudReachable.update { false }
             Log.e(TAG, "Unexpected error during internet reachability check: ${e.message}", e)
             return@withContext false
         }
     }
 
-    suspend fun startMonitoring(intervalMillis: Long = 30000) { // Default to 30s
+    /**
+     * Starts periodic monitoring of cloud status at the specified interval.
+     */
+    suspend fun startMonitoring(intervalMillis: Long = 30000) {
         Log.d(TAG, "Starting periodic cloud status monitoring every $intervalMillis ms.")
-        // Perform an initial check immediately
         checkActualInternetReachability()
         while (true) {
             delay(intervalMillis)

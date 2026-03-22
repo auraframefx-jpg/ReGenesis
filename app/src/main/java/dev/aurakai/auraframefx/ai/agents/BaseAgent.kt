@@ -2,11 +2,9 @@ package dev.aurakai.auraframefx.ai.agents
 
 import dev.aurakai.auraframefx.ai.context.ContextManager
 import dev.aurakai.auraframefx.ai.memory.MemoryManager
-import dev.aurakai.auraframefx.core.OrchestratableAgent
-import dev.aurakai.auraframefx.models.AgentResponse
-import dev.aurakai.auraframefx.models.AgentType
-import dev.aurakai.auraframefx.models.AiRequest
-import kotlinx.coroutines.CoroutineScope
+import dev.aurakai.auraframefx.model.AgentResponse
+import dev.aurakai.auraframefx.model.AgentType
+import dev.aurakai.auraframefx.model.AiRequest
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
@@ -16,11 +14,15 @@ import kotlinx.coroutines.flow.flow
  * Provides common functionality for all AI agents
  */
 abstract class BaseAgent(
-    override val agentName: String,
-    protected val agentType: AgentType,
+    private val agentName: String,
+    private val agentType: AgentType,
     protected val contextManager: ContextManager? = null,
     protected val memoryManager: MemoryManager? = null
-) : Agent, OrchestratableAgent {
+) : Agent {
+
+    companion object {
+        const val TOPL_VL = "1.0.0-GENESIS"
+    }
 
     override fun getName(): String = agentName
 
@@ -45,7 +47,7 @@ abstract class BaseAgent(
             delay(100) // Small delay for UI feedback
 
             // Process the actual request
-            val response = processRequest(request, enhancedContext as String)
+            val response = processRequest(request, enhancedContext)
 
             // Record the interaction for learning
             contextManager?.recordInsight(
@@ -61,7 +63,6 @@ abstract class BaseAgent(
             emit(AgentResponse.error("Error in ${agentName}: ${e.message}"))
         }
     }
-
 
     /**
      * Determines the complexity level of a request
@@ -137,8 +138,7 @@ abstract class BaseAgent(
         return AgentResponse.success(
             content = content,
             agentName = agentName,
-            metadata = metadata + getAgentConfig(),
-            agent = agentType
+            metadata = metadata + getAgentConfig()
         )
     }
 
@@ -154,67 +154,5 @@ abstract class BaseAgent(
      */
     protected open fun logActivity(activity: String, details: Map<String, Any> = emptyMap()) {
         println("[$agentName] $activity: $details")
-    }
-
-    // --- Orchestration Support Methods ---
-
-    open suspend fun refreshStatus(): Map<String, Any> = mapOf("status" to "active", "agent" to agentName)
-
-    open suspend fun getPerformanceMetrics(): Map<String, Any> = emptyMap()
-
-    open suspend fun optimize() {
-        // Default no-op
-    }
-
-    open suspend fun clearMemoryCache() {
-        // Default no-op
-    }
-
-    open suspend fun updatePerformanceSettings() {
-        // Default no-op
-    }
-
-    open suspend fun connectToMasterChannel(channel: Any) {
-        // Default no-op
-    }
-
-    open suspend fun disconnect() {
-        // Default no-op
-    }
-
-    // --- OrchestratableAgent Implementation ---
-
-    protected var orchestrationScope: CoroutineScope? = null
-    protected var isOrchestratorInitialized = false
-
-    override suspend fun initialize(scope: CoroutineScope) {
-        orchestrationScope = scope
-        isOrchestratorInitialized = true
-    }
-
-    override suspend fun start() {
-        // Default implementation - subclasses can override
-    }
-
-    override suspend fun pause() {
-        // Default implementation - subclasses can override
-    }
-
-    override suspend fun resume() {
-        // Default implementation - subclasses can override
-    }
-
-    override suspend fun shutdown() {
-        orchestrationScope = null
-        isOrchestratorInitialized = false
-    }
-
-    override suspend fun processRequest(request: AiRequest, context: String, agentType: AgentType): AgentResponse {
-        // Delegates to the two-argument version
-        return processRequest(request, context)
-    }
-
-    override suspend fun onAgentMessage(message: dev.aurakai.auraframefx.models.AgentMessage) {
-        // Default no-op: agents should override this to participate in the collective
     }
 }
